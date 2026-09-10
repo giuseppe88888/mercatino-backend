@@ -5,6 +5,8 @@ const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
 const Product = require('./models/Product');
+// La password segreta per gestire i prodotti (cambiala con quella che vuoi)
+const PASSWORD_ADMIN = "supersegreta123";
 
 // Forziamo i DNS
 dns.setServers(['8.8.8.8', '8.8.4.4']);
@@ -37,26 +39,31 @@ mongoose.connect(LINK_STANDARD)
     .then(() => console.log('📦 Database collegato con successo!'))
     .catch((err) => console.log('❌ L\'errore vero di MongoDB è:', err.message));
 
-// Rotta per salvare il prodotto
+// Rotta per aggiungere un prodotto (PROTETTA)
 app.post('/api/prodotti', upload.single('immagine'), async (req, res) => {
-    try {
-        const datiDalForm = req.body; 
-        
-        // req.file.path ora contiene il LINK PUBBLICO fornito da Cloudinary, non più un percorso locale!
-        const linkImmagineCloud = req.file ? req.file.path : '';
+    // 1. Controlla la password
+    if (req.body.password !== PASSWORD_ADMIN) {
+        return res.status(401).send("Password errata. Non sei autorizzato.");
+    }
 
+    try {
+        let imageUrl = null;
+        // ... (IL RESTO DEL TUO CODICE PER CARICARE L'IMMAGINE E SALVARE NEL DATABASE RIMANE UGUALE)
+        if (req.file) {
+            imageUrl = req.file.path;
+        }
+        
         const nuovoProdotto = new Product({
-            titolo: datiDalForm.titolo,
-            descrizione: datiDalForm.descrizione,
-            prezzo: datiDalForm.prezzo,
-            condizione: datiDalForm.condizione,
-            immagine: linkImmagineCloud 
+            titolo: req.body.titolo,
+            prezzo: req.body.prezzo,
+            condizione: req.body.condizione,
+            immagine: imageUrl
         });
 
-        await nuovoProdotto.save(); 
-        res.send('<h2>✅ Prodotto e foto salvati nel CLOUD!</h2><a href="/index.html">Vai alla Vetrina</a>');
+        await nuovoProdotto.save();
+        res.redirect('/admin.html'); // Ti rimanda al pannello di controllo dopo l'aggiunta
     } catch (errore) {
-        res.send('❌ Errore nel salvataggio: ' + errore.message);
+        res.status(500).send("Errore nel salvataggio del prodotto: " + errore.message);
     }
 });
 
@@ -69,15 +76,18 @@ app.get('/api/prodotti', async (req, res) => {
         res.status(500).send('Errore nel recupero prodotti: ' + errore.message);
     }
 });
-// Rotta per eliminare un prodotto
+// Rotta per eliminare un prodotto (PROTETTA)
 app.delete('/api/prodotti/:id', async (req, res) => {
+    // La password in questo caso ci arriva tramite un "header" della richiesta fetch
+    const passwordRicevuta = req.headers['authorization'];
+    
+    if (passwordRicevuta !== PASSWORD_ADMIN) {
+        return res.status(401).send("Password errata. Non sei autorizzato.");
+    }
+
     try {
-        // Prende l'ID del prodotto dall'indirizzo web
         const idProdotto = req.params.id; 
-        
-        // Cerca nel database quel prodotto e lo disintegra
         await Product.findByIdAndDelete(idProdotto); 
-        
         res.send('Prodotto eliminato con successo!');
     } catch (errore) {
         res.status(500).send('Errore nella cancellazione: ' + errore.message);

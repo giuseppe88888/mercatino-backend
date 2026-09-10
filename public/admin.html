@@ -229,3 +229,33 @@
 </script>
 </body>
 </html>
+// (Aggiungi questo bottone nella cardHTML in admin.html)
+    // <button onclick="eliminaProdotto('${prodotto._id}')">🗑️ Elimina</button>
+
+    async function eliminaProdotto(idProdotto) {
+        const conferma = confirm("Sei sicuro di voler eliminare per sempre questo prodotto?");
+        if (!conferma) return;
+
+        // Chiede all'admin di digitare la password per confermare
+        const passwordAdmin = prompt("Inserisci la password admin per eliminare:");
+        
+        if (!passwordAdmin) return; // Se clicca annulla o non scrive niente
+
+        try {
+            const risposta = await fetch('/api/prodotti/' + idProdotto, { 
+                method: 'DELETE',
+                // Invia la password nel "bagaglio a mano" della richiesta
+                headers: {
+                    'Authorization': passwordAdmin
+                }
+            });
+            
+            if (risposta.ok) {
+                caricaProdotti(); 
+            } else {
+                alert("❌ Impossibile eliminare. Password errata?");
+            }
+        } catch (errore) {
+            alert("❌ Errore di rete.");
+        }
+    }
