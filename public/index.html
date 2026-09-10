@@ -2,64 +2,262 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Il Mio Magazzino</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Mio Mercatino Online</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
-        h1 { text-align: center; color: #2c3e50; }
-        .aggiungi-btn { display: block; width: 200px; margin: 0 auto 30px; text-align: center; background-color: #27ae60; color: white; padding: 10px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        /* Stili Base e Reset */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
         
-        /* La Griglia dei Prodotti */
-        #griglia-prodotti { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Barra di Ricerca e Filtri */
+        .controlli {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+        }
         
-        /* La singola Card del prodotto */
-        .card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-        .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 5px; margin-bottom: 10px; }
-        .card h3 { margin: 0 0 10px 0; font-size: 1.2rem; }
-        .card p { flex-grow: 1; font-size: 0.9rem; color: #666; }
-        .prezzo { font-size: 1.3rem; font-weight: bold; color: #e74c3c; margin-top: 10px; }
-        .condizione { display: inline-block; background: #eee; padding: 3px 8px; border-radius: 10px; font-size: 0.8rem; margin-top: 5px; }
+        .ricerca {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .filtri-condizione {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-filtro {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background-color: #ddd;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-filtro:hover, .btn-filtro.attivo {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Loading Spinner */
+        #loading {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            margin-top: 50px;
+        }
+
+        /* Griglia Prodotti */
+        .griglia-prodotti {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Card Prodotto (Stile Subito.it) */
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover; /* Fondamentale: impedisce alle foto di deformarsi */
+        }
+
+        .card-dettagli {
+            padding: 15px;
+        }
+
+        .card-titolo {
+            font-size: 18px;
+            margin: 0 0 10px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-prezzo {
+            font-weight: bold;
+            font-size: 20px;
+            color: #d32f2f;
+            margin: 0 0 5px 0;
+        }
+
+        .card-condizione {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            background-color: #eee;
+            padding: 3px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
-    <h1>Il Mio Magazzino 📦</h1>
-    <a href="/aggiungi.html" class="aggiungi-btn">+ Aggiungi Prodotto</a>
 
-    <div id="griglia-prodotti">
-        <!-- I prodotti verranno caricati qui dentro da JavaScript -->
+    <div class="header">
+        <h1>Vetrina dell'Usato</h1>
+        <a href="/aggiungi.html" style="color: #007bff;">+ Inserisci un annuncio</a>
     </div>
 
-    <script>
-        // Appena la pagina si carica, chiediamo i prodotti al server
-        async function caricaProdotti() {
-            try {
-                const risposta = await fetch('/api/prodotti');
-                const prodotti = await risposta.json();
-                
-                const contenitore = document.getElementById('griglia-prodotti');
-                
-                // Per ogni prodotto trovato nel database, creiamo una "card" HTML
-                prodotti.forEach(prodotto => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    
-                    // Costruiamo l'interno della card
-                    card.innerHTML = `
-                        <img src="${prodotto.immagine || 'https://via.placeholder.com/250x200?text=Nessuna+Foto'}" alt="${prodotto.titolo}">
-                        <h3>${prodotto.titolo}</h3>
-                        <p>${prodotto.descrizione}</p>
-                        <span class="condizione">${prodotto.condizione || 'N/A'}</span>
-                        <div class="prezzo">€ ${prodotto.prezzo.toFixed(2)}</div>
-                    `;
-                    
-                    contenitore.appendChild(card);
-                });
-            } catch (errore) {
-                console.error("Errore nel caricamento:", errore);
-            }
+    <!-- Sezione Filtri -->
+    <div class="controlli">
+        <input type="text" id="barra-ricerca" class="ricerca" placeholder="Cosa stai cercando?">
+        
+        <div class="filtri-condizione">
+            <button class="btn-filtro attivo" data-condizione="tutte">Tutte</button>
+            <button class="btn-filtro" data-condizione="nuovo">Nuovo</button>
+            <button class="btn-filtro" data-condizione="usato">Usato</button>
+        </div>
+    </div>
+
+    <!-- Stato di caricamento (utile per il riavvio di Render) -->
+    <div id="loading">Risveglio del server in corso... attendi qualche secondo. ☕</div>
+
+    <!-- Contenitore della Griglia -->
+    <div class="griglia-prodotti" id="vetrina"></div>
+
+    <!-- Inseriremo qui il JS -->
+<script>
+    // Variabile globale per salvare tutti i prodotti scaricati dal server
+    let catalogoCompleto = [];
+    
+    // Variabile per tenere traccia del filtro condizione attivo
+    let filtroCondizioneAttuale = 'tutte';
+
+    // Riferimenti agli elementi del DOM
+    const contenitoreVetrina = document.getElementById('vetrina');
+    const loadingMessage = document.getElementById('loading');
+    const barraRicerca = document.getElementById('barra-ricerca');
+    const bottoniFiltro = document.querySelectorAll('.btn-filtro');
+
+    // 1. Funzione per scaricare i dati (Fetch)
+    async function caricaProdotti() {
+        try {
+            const risposta = await fetch('/api/prodotti');
+            catalogoCompleto = await risposta.json();
+            
+            // Nascondi il messaggio di caricamento
+            loadingMessage.style.display = 'none';
+            
+            // Disegna i prodotti la prima volta
+            mostraProdotti(catalogoCompleto);
+        } catch (errore) {
+            loadingMessage.innerText = '❌ Errore nel caricamento dei prodotti.';
+            console.error('Errore:', errore);
+        }
+    }
+
+    // 2. Funzione per generare le Card HTML
+    function mostraProdotti(prodottiDaMostrare) {
+        // Svuota il contenitore
+        contenitoreVetrina.innerHTML = '';
+        
+        if (prodottiDaMostrare.length === 0) {
+            contenitoreVetrina.innerHTML = '<p>Nessun prodotto trovato.</p>';
+            return;
         }
 
-        // Eseguiamo la funzione
-        caricaProdotti();
-    </script>
+        // Crea una card per ogni prodotto
+        prodottiDaMostrare.forEach(prodotto => {
+            // Formattazione del prezzo
+            const prezzoFormattato = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
+            
+            // Gestione dell'immagine (se manca, mettiamo un segnaposto)
+            const immagineSrc = prodotto.immagine ? prodotto.immagine : 'https://via.placeholder.com/250?text=No+Foto';
+
+            const cardHTML = `
+                <div class="card">
+                    <img src="${immagineSrc}" alt="${prodotto.titolo}">
+                    <div class="card-dettagli">
+                        <h3 class="card-titolo">${prodotto.titolo}</h3>
+                        <p class="card-prezzo">${prezzoFormattato}</p>
+                        <span class="card-condizione">${prodotto.condizione || 'Non specificato'}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Aggiungi la card al contenitore
+            contenitoreVetrina.innerHTML += cardHTML;
+        });
+    }
+
+    // 3. Logica di filtraggio combinato (Testo + Bottoni)
+    function applicaFiltri() {
+        const testoRicerca = barraRicerca.value.toLowerCase();
+        
+        const prodottiFiltrati = catalogoCompleto.filter(prodotto => {
+            // Verifica la ricerca testuale
+            const titoloCorrisponde = prodotto.titolo.toLowerCase().includes(testoRicerca);
+            
+            // Verifica la condizione
+            const condizioneCorrisponde = (filtroCondizioneAttuale === 'tutte') || 
+                                          (prodotto.condizione && prodotto.condizione.toLowerCase() === filtroCondizioneAttuale);
+            
+            // Restituisce true solo se entrambe le condizioni sono soddisfatte
+            return titoloCorrisponde && condizioneCorrisponde;
+        });
+
+        mostraProdotti(prodottiFiltrati);
+    }
+
+    // 4. Event Listeners
+
+    // Ascolta la digitazione nella barra di ricerca
+    barraRicerca.addEventListener('input', applicaFiltri);
+
+    // Ascolta i click sui bottoni della condizione
+    bottoniFiltro.forEach(bottone => {
+        bottone.addEventListener('click', (evento) => {
+            // Rimuovi la classe 'attivo' da tutti i bottoni
+            bottoniFiltro.forEach(b => b.classList.remove('attivo'));
+            
+            // Aggiungila solo al bottone cliccato
+            evento.target.classList.add('attivo');
+            
+            // Aggiorna la variabile globale
+            filtroCondizioneAttuale = evento.target.dataset.condizione;
+            
+            // Riapplica i filtri
+            applicaFiltri();
+        });
+    });
+
+    // Avvia il caricamento iniziale appena la pagina si apre
+    caricaProdotti();
+
+</script>
 </body>
 </html>
