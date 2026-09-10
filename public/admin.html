@@ -3,177 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Il Mio Mercatino Online</title>
+    <title>Pannello di Controllo - Mercatino</title>
     <style>
         /* Stili Base e Reset */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        /* Barra di Ricerca e Filtri */
-        .controlli {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 600px;
-            margin: 0 auto 30px auto;
-        }
-        
-        .ricerca {
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 25px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .filtri-condizione {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-filtro {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 20px;
-            background-color: #ddd;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .btn-filtro:hover, .btn-filtro.attivo {
-            background-color: #007bff;
-            color: white;
-        }
-
-        /* Loading Spinner */
-        #loading {
-            text-align: center;
-            font-size: 18px;
-            color: #666;
-            margin-top: 50px;
-        }
-
-        /* Griglia Prodotti */
-        .griglia-prodotti {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Card Prodotto */
-        .card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
-        }
-
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .card-dettagli {
-            padding: 15px;
-        }
-
-        .card-titolo {
-            font-size: 18px;
-            margin: 0 0 10px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card-prezzo {
-            font-weight: bold;
-            font-size: 20px;
-            color: #d32f2f;
-            margin: 0 0 5px 0;
-        }
-
-        .card-condizione {
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-            background-color: #eee;
-            padding: 3px 8px;
-            border-radius: 10px;
-            display: inline-block;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; color: #333; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .controlli { display: flex; flex-direction: column; gap: 15px; max-width: 600px; margin: 0 auto 30px auto; }
+        .ricerca { padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 25px; width: 100%; box-sizing: border-box; }
+        .filtri-condizione { display: flex; justify-content: center; gap: 10px; }
+        .btn-filtro { padding: 8px 16px; border: none; border-radius: 20px; background-color: #ddd; cursor: pointer; transition: background-color 0.3s; }
+        .btn-filtro:hover, .btn-filtro.attivo { background-color: #d32f2f; color: white; }
+        #loading { text-align: center; font-size: 18px; color: #666; margin-top: 50px; }
+        .griglia-prodotti { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-dettagli { padding: 15px; }
+        .card-titolo { font-size: 18px; margin: 0 0 10px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-prezzo { font-weight: bold; font-size: 20px; color: #d32f2f; margin: 0 0 5px 0; }
+        .card-condizione { font-size: 12px; color: #666; text-transform: uppercase; background-color: #eee; padding: 3px 8px; border-radius: 10px; display: inline-block; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Vetrina dell'Usato</h1>
-        <!-- Il link per aggiungere annunci è stato rimosso dalla vetrina pubblica -->
+        <h1 style="color: #d32f2f;">Area Amministratore</h1>
+        <p>Da qui puoi eliminare i prodotti dal database.</p>
+        <a href="/aggiungi.html" style="color: #007bff;">+ Inserisci un nuovo annuncio</a> | 
+        <a href="/index.html" style="color: #666;">Torna alla Vetrina Pubblica</a>
     </div>
 
-    <!-- Sezione Filtri -->
     <div class="controlli">
-        <input type="text" id="barra-ricerca" class="ricerca" placeholder="Cosa stai cercando?">
-        
-        <div class="filtri-condizione">
-            <button class="btn-filtro attivo" data-condizione="tutte">Tutte</button>
-            <button class="btn-filtro" data-condizione="nuovo">Nuovo</button>
-            <button class="btn-filtro" data-condizione="usato">Usato</button>
-        </div>
+        <input type="text" id="barra-ricerca" class="ricerca" placeholder="Cerca prodotto da eliminare...">
     </div>
 
-    <!-- Stato di caricamento -->
-    <div id="loading">Risveglio del server in corso... attendi qualche secondo. ☕</div>
-
-    <!-- Contenitore della Griglia -->
+    <div id="loading">Caricamento inventario...</div>
     <div class="griglia-prodotti" id="vetrina"></div>
 
 <script>
     let catalogoCompleto = [];
-    let filtroCondizioneAttuale = 'tutte';
-
     const contenitoreVetrina = document.getElementById('vetrina');
     const loadingMessage = document.getElementById('loading');
     const barraRicerca = document.getElementById('barra-ricerca');
-    const bottoniFiltro = document.querySelectorAll('.btn-filtro');
 
     async function caricaProdotti() {
         try {
             const risposta = await fetch('/api/prodotti');
             catalogoCompleto = await risposta.json();
-            
             loadingMessage.style.display = 'none';
             mostraProdotti(catalogoCompleto);
         } catch (errore) {
-            loadingMessage.innerText = '❌ Errore nel caricamento dei prodotti.';
-            console.error('Errore:', errore);
+            loadingMessage.innerText = '❌ Errore nel caricamento.';
         }
     }
 
     function mostraProdotti(prodottiDaMostrare) {
         contenitoreVetrina.innerHTML = '';
-        
         if (prodottiDaMostrare.length === 0) {
             contenitoreVetrina.innerHTML = '<p>Nessun prodotto trovato.</p>';
             return;
@@ -183,79 +67,58 @@
             const prezzoFormattato = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
             const immagineSrc = prodotto.immagine ? prodotto.immagine : 'https://via.placeholder.com/250?text=No+Foto';
 
-            // Ho rimosso il bottone "Elimina" da questa pagina pubblica
             const cardHTML = `
                 <div class="card">
                     <img src="${immagineSrc}" alt="${prodotto.titolo}">
                     <div class="card-dettagli">
                         <h3 class="card-titolo">${prodotto.titolo}</h3>
                         <p class="card-prezzo">${prezzoFormattato}</p>
-                        <span class="card-condizione">${prodotto.condizione || 'Non specificato'}</span>
+                        
+                        <!-- Bottone Elimina (Solo per Admin) -->
+                        <button onclick="eliminaProdotto('${prodotto._id}')" style="display:block; margin-top:15px; background:#d32f2f; color:white; border:none; padding:8px 10px; border-radius:5px; cursor:pointer; width:100%; font-weight:bold;">
+                            🗑️ Elimina Definitivamente
+                        </button>
                     </div>
                 </div>
             `;
-            
             contenitoreVetrina.innerHTML += cardHTML;
         });
     }
 
-    function applicaFiltri() {
-        const testoRicerca = barraRicerca.value.toLowerCase();
-        
-        const prodottiFiltrati = catalogoCompleto.filter(prodotto => {
-            const titoloCorrisponde = prodotto.titolo.toLowerCase().includes(testoRicerca);
-            const condizioneCorrisponde = (filtroCondizioneAttuale === 'tutte') || 
-                                          (prodotto.condizione && prodotto.condizione.toLowerCase() === filtroCondizioneAttuale);
-            
-            return titoloCorrisponde && condizioneCorrisponde;
-        });
-
-        mostraProdotti(prodottiFiltrati);
-    }
-
-    barraRicerca.addEventListener('input', applicaFiltri);
-
-    bottoniFiltro.forEach(bottone => {
-        bottone.addEventListener('click', (evento) => {
-            bottoniFiltro.forEach(b => b.classList.remove('attivo'));
-            evento.target.classList.add('attivo');
-            filtroCondizioneAttuale = evento.target.dataset.condizione;
-            applicaFiltri();
-        });
-    });
-
-    caricaProdotti();
-
-</script>
-</body>
-</html>
-// (Aggiungi questo bottone nella cardHTML in admin.html)
-    // <button onclick="eliminaProdotto('${prodotto._id}')">🗑️ Elimina</button>
-
     async function eliminaProdotto(idProdotto) {
-        const conferma = confirm("Sei sicuro di voler eliminare per sempre questo prodotto?");
+        const conferma = confirm("ATTENZIONE: Sei sicuro di voler eliminare questo prodotto dal database?");
         if (!conferma) return;
 
-        // Chiede all'admin di digitare la password per confermare
-        const passwordAdmin = prompt("Inserisci la password admin per eliminare:");
-        
-        if (!passwordAdmin) return; // Se clicca annulla o non scrive niente
+        // Richiede la password per procedere
+        const passwordAdmin = prompt("Inserisci la password amministratore per confermare l'eliminazione:");
+        if (!passwordAdmin) return;
 
         try {
             const risposta = await fetch('/api/prodotti/' + idProdotto, { 
                 method: 'DELETE',
-                // Invia la password nel "bagaglio a mano" della richiesta
                 headers: {
-                    'Authorization': passwordAdmin
+                    'Authorization': passwordAdmin // Invia la password al server
                 }
             });
             
             if (risposta.ok) {
-                caricaProdotti(); 
+                alert("Prodotto eliminato con successo.");
+                caricaProdotti(); // Aggiorna la griglia
             } else {
-                alert("❌ Impossibile eliminare. Password errata?");
+                alert("❌ Impossibile eliminare. La password è errata?");
             }
         } catch (errore) {
-            alert("❌ Errore di rete.");
+            alert("❌ Errore di connessione.");
         }
     }
+
+    barraRicerca.addEventListener('input', () => {
+        const testoRicerca = barraRicerca.value.toLowerCase();
+        const prodottiFiltrati = catalogoCompleto.filter(prodotto => prodotto.titolo.toLowerCase().includes(testoRicerca));
+        mostraProdotti(prodottiFiltrati);
+    });
+
+    caricaProdotti();
+</script>
+</body>
+</html>
