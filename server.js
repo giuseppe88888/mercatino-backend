@@ -69,5 +69,18 @@ app.get('/api/prodotti', async (req, res) => {
         res.status(500).send('Errore nel recupero prodotti: ' + errore.message);
     }
 });
-
+// Rotta per eliminare un prodotto
+app.delete('/api/prodotti/:id', async (req, res) => {
+    try {
+        // Prende l'ID del prodotto dall'indirizzo web
+        const idProdotto = req.params.id; 
+        
+        // Cerca nel database quel prodotto e lo disintegra
+        await Product.findByIdAndDelete(idProdotto); 
+        
+        res.send('Prodotto eliminato con successo!');
+    } catch (errore) {
+        res.status(500).send('Errore nella cancellazione: ' + errore.message);
+    }
+});
 app.listen(3000, () => console.log('✅ Server acceso e in ascolto sulla porta 3000!'));

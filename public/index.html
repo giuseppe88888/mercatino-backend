@@ -205,9 +205,28 @@
                         <h3 class="card-titolo">${prodotto.titolo}</h3>
                         <p class="card-prezzo">${prezzoFormattato}</p>
                         <span class="card-condizione">${prodotto.condizione || 'Non specificato'}</span>
+                        
+                        <!-- Bottone Elimina (Visibile a tutti per ora) -->
+                        <button onclick="eliminaProdotto('${prodotto._id}')" style="display:block; margin-top:15px; background:#d32f2f; color:white; border:none; padding:8px 10px; border-radius:5px; cursor:pointer; width:100%; font-weight:bold;">🗑️ Elimina Annuncio</button>
                     </div>
                 </div>
             `;
+            // 5. Funzione per eliminare il prodotto
+    async function eliminaProdotto(idProdotto) {
+        // Chiede conferma prima di fare danni
+        const conferma = confirm("Sei sicuro di voler eliminare per sempre questo prodotto?");
+        if (!conferma) return; // Se l'utente clicca Annulla, si ferma qui
+
+        try {
+            // Chiama il motore Node.js dicendogli di usare il metodo DELETE
+            await fetch('/api/prodotti/' + idProdotto, { method: 'DELETE' });
+            
+            // Ricarica la lista dei prodotti aggiornata dal database
+            caricaProdotti(); 
+        } catch (errore) {
+            alert("❌ Errore durante l'eliminazione.");
+        }
+    }
             
             // Aggiungi la card al contenitore
             contenitoreVetrina.innerHTML += cardHTML;
