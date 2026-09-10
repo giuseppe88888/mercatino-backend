@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Aggiungi Prodotto</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        form { display: flex; flex-direction: column; width: 300px; gap: 10px; }
+        input, textarea, button { padding: 8px; }
+    </style>
+</head>
+<body>
+    <h2>Aggiungi un nuovo prodotto al Magazzino</h2>
+    
+    <!-- L'attributo enctype="multipart/form-data" è essenziale per inviare immagini al server -->
+    <form action="/api/prodotti" method="POST" enctype="multipart/form-data">
+        <input type="text" name="titolo" placeholder="Titolo (es. Tavolo)" required>
+        <textarea name="descrizione" placeholder="Descrizione del prodotto..." required></textarea>
+        <input type="number" name="prezzo" step="0.01" placeholder="Prezzo (€)" required>
+        <input type="text" name="condizione" placeholder="Condizione (es. Nuovo, Usato)">
+        
+        <!-- Il nuovo pulsante per caricare la foto -->
+        <label>Carica Foto:</label>
+        <input type="file" name="immagine" accept="image/*" required>
+        
+        <button type="submit">Salva nel Database</button>
+    </form>
+</body>
+</html>
