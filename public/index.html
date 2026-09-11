@@ -129,7 +129,6 @@
 
     <div class="header">
         <h1>Vetrina dell'Usato</h1>
-        <!-- Il link per aggiungere annunci è stato rimosso dalla vetrina pubblica -->
     </div>
 
     <!-- Sezione Filtri -->
@@ -181,11 +180,13 @@
 
         prodottiDaMostrare.forEach(prodotto => {
             const prezzoFormattato = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
-// Prende la prima immagine dall'array, se non c'è mette il segnaposto
+            
+            // Prende la prima immagine dall'array, se non c'è mette il segnaposto
             const immagineSrc = (prodotto.immagini && prodotto.immagini.length > 0) ? prodotto.immagini[0] : 'https://via.placeholder.com/250?text=No+Foto';
-            // Ho rimosso il bottone "Elimina" da questa pagina pubblica
+            
+            // Creazione della card Cliccabile che porta alla pagina prodotto.html
             const cardHTML = `
-                <div class="card">
+                <div class="card" onclick="window.location.href='/prodotto.html?id=${prodotto._id}'">
                     <img src="${immagineSrc}" alt="${prodotto.titolo}">
                     <div class="card-dettagli">
                         <h3 class="card-titolo">${prodotto.titolo}</h3>

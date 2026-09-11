@@ -71,7 +71,16 @@ app.get('/api/prodotti', async (req, res) => {
         res.status(500).send('Errore nel recupero prodotti: ' + errore.message);
     }
 });
-
+// Rotta per recuperare i dettagli di un singolo prodotto
+app.get('/api/prodotti/:id', async (req, res) => {
+    try {
+        const prodotto = await Product.findById(req.params.id);
+        if (!prodotto) return res.status(404).send('Prodotto non trovato');
+        res.json(prodotto);
+    } catch (errore) {
+        res.status(500).send('Errore nel recupero prodotto: ' + errore.message);
+    }
+});
 // 2. Rotta per il Login (Rilascia il pass)
 app.post('/api/login', (req, res) => {
     const passwordInserita = req.body.password;

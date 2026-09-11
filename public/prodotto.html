@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dettaglio Prodotto</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; color: #333; }
+        .contenitore { max-width: 1000px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-wrap: wrap; overflow: hidden; padding: 20px; gap: 30px; }
+        
+        /* Sezione Galleria */
+        .galleria { flex: 1; min-width: 300px; }
+        .foto-principale { width: 100%; height: 400px; object-fit: contain; border: 1px solid #eee; border-radius: 8px; margin-bottom: 10px; background-color: #f9f9f9; }
+        .miniature { display: flex; gap: 10px; overflow-x: auto; }
+        .miniature img { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; opacity: 0.6; transition: 0.3s; }
+        .miniature img:hover, .miniature img.attiva { opacity: 1; border-color: #d32f2f; }
+
+        /* Sezione Info */
+        .info { flex: 1; min-width: 300px; display: flex; flex-direction: column; }
+        h1 { margin-top: 0; font-size: 28px; }
+        .prezzo { font-size: 32px; font-weight: bold; color: #d32f2f; margin: 10px 0; }
+        .condizione { display: inline-block; background: #eee; padding: 5px 10px; border-radius: 15px; font-size: 14px; margin-bottom: 20px; }
+        .descrizione { font-size: 16px; line-height: 1.6; color: #555; white-space: pre-wrap; margin-bottom: 30px; flex-grow: 1; }
+        
+        .btn-whatsapp { background: #25D366; color: white; text-align: center; text-decoration: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 18px; display: block; }
+        .btn-whatsapp:hover { background: #1ebe57; }
+        .link-indietro { margin-bottom: 20px; display: inline-block; color: #007bff; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <a href="/index.html" class="link-indietro">← Torna alla Vetrina</a>
+    <div class="contenitore" id="dettaglio-prodotto">
+        <h2>Caricamento in corso...</h2>
+    </div>
+
+<script>
+    // 1. Estrae l'ID dall'indirizzo web (es: ?id=12345)
+    const urlParams = new URLSearchParams(window.location.search);
+    const idProdotto = urlParams.get('id');
+    const contenitore = document.getElementById('dettaglio-prodotto');
+    
+    // Il tuo numero per WhatsApp (inserisci il tuo vero)
+    const numeroWhatsApp = "393331234567"; 
+
+    async function caricaProdotto() {
+        if (!idProdotto) {
+            contenitore.innerHTML = "<h2>Prodotto non trovato.</h2>";
+            return;
+        }
+
+        try {
+            const risposta = await fetch('/api/prodotti/' + idProdotto);
+            if (!risposta.ok) throw new Error("Prodotto inesistente");
+            const prodotto = await risposta.json();
+            
+            mostraProdotto(prodotto);
+        } catch (errore) {
+            contenitore.innerHTML = "<h2>Errore: " + errore.message + "</h2>";
+        }
+    }
+
+    function mostraProdotto(prodotto) {
+        const prezzoFormattato = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
+        const messaggioWA = encodeURIComponent("Ciao! Sono interessato al tuo annuncio: " + prodotto.titolo);
+        const linkWA = `https://wa.me/${numeroWhatsApp}?text=${messaggioWA}`;
+        
+        // Gestione Array Immagini
+        let immaginiArray = prodotto.immagini && prodotto.immagini.length > 0 ? prodotto.immagini : ['https://via.placeholder.com/600?text=No+Foto'];
+        
+        // Creazione HTML Miniature
+        let miniatureHTML = '';
+        immaginiArray.forEach((imgUrl, index) => {
+            let classeAttiva = index === 0 ? 'attiva' : '';
+            miniatureHTML += `<img src="${imgUrl}" class="${classeAttiva}" onclick="cambiaFoto(this, '${imgUrl}')">`;
+        });
+
+        contenitore.innerHTML = `
+            <div class="galleria">
+                <img src="${immaginiArray[0]}" id="foto-grande" class="foto-principale">
+                <div class="miniature">
+                    ${miniatureHTML}
+                </div>
+            </div>
+            
+            <div class="info">
+                <h1>${prodotto.titolo}</h1>
+                <div class="prezzo">${prezzoFormattato}</div>
+                <span class="condizione">Condizione: ${prodotto.condizione || 'Non specificata'}</span>
+                
+                <h3>Descrizione:</h3>
+                <div class="descrizione">${prodotto.descrizione || 'Nessuna descrizione inserita.'}</div>
+                
+                <a href="${linkWA}" target="_blank" class="btn-whatsapp">💬 Contatta il Venditore</a>
+            </div>
+        `;
+    }
+
+    // Funzione per cambiare l'immagine grande cliccando sulle miniature
+    window.cambiaFoto = function(elementoMiniatura, urlImmagine) {
+        document.getElementById('foto-grande').src = urlImmagine;
+        
+        // Aggiorna il bordo rosso sulla miniatura cliccata
+        document.querySelectorAll('.miniature img').forEach(img => img.classList.remove('attiva'));
+        elementoMiniatura.classList.add('attiva');
+    }
+
+    caricaProdotto();
+</script>
+</body>
+</html>
