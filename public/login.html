@@ -2,26 +2,47 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Accesso Area Riservata</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accesso Riservato - Il Mio Mercatino</title>
     <style>
-        body { font-family: sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
-        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; background: #007bff; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        #messaggio-errore { color: red; margin-top: 10px; display: none; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif; background-color: #111; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #333; }
+        
+        .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 100%; max-width: 350px; }
+        .logo { font-size: 24px; font-weight: 900; color: #333; text-decoration: none; letter-spacing: -0.5px; margin-bottom: 20px; display: block; }
+        .logo span { color: #e53935; }
+        
+        input { width: 100%; padding: 14px; margin: 15px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; background-color: #f9fafb; text-align: center; }
+        input:focus { outline: none; border-color: #e53935; box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1); }
+        
+        button { width: 100%; background: #e53935; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: background 0.2s; }
+        button:hover { background: #c62828; }
+        
+        #messaggio-errore { color: #dc2626; margin-top: 15px; font-weight: bold; font-size: 14px; display: none; }
+        .info { font-size: 12px; color: #666; margin-top: 20px; }
     </style>
 </head>
 <body>
 
     <div class="login-box">
-        <h2>Area Venditore</h2>
-        <input type="password" id="password" placeholder="Inserisci password admin">
-        <button onclick="faiLogin()">Accedi</button>
-        <p id="messaggio-errore">Password errata!</p>
+        <div class="logo">Area<span>Gestione</span></div>
+        <p style="color: #666; font-size: 14px; margin-bottom: 25px;">Inserisci la password di amministrazione per accedere al magazzino.</p>
+        
+        <input type="password" id="password" placeholder="Password Admin" onkeypress="inviaConInvio(event)">
+        <button onclick="faiLogin()">Accedi al Gestionale</button>
+        
+        <p id="messaggio-errore">❌ Password errata. Riprova.</p>
+        <p class="info">Torna alla <a href="/index.html" style="color: #e53935;">Vetrina Pubblica</a></p>
     </div>
 
     <script>
+        // Permette di premere "Invio" sulla tastiera per fare il login
+        function inviaConInvio(event) {
+            if (event.key === "Enter") {
+                faiLogin();
+            }
+        }
+
         async function faiLogin() {
             const password = document.getElementById('password').value;
             const msgErrore = document.getElementById('messaggio-errore');
@@ -34,11 +55,11 @@
                 });
 
                 if (risposta.ok) {
-                    // Login corretto, il server ha impostato il cookie
-                    // Ti rimanda automaticamente alla dashboard
-                    window.location.href = '/admin.html';
+                    // Login corretto! Ci ricarica sulla rotta "gestione" (che ora ci farà passare)
+                    window.location.href = '/gestione';
                 } else {
                     msgErrore.style.display = 'block';
+                    document.getElementById('password').value = ''; // Pulisce il campo
                 }
             } catch (err) {
                 alert('Errore di connessione');

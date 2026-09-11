@@ -59,7 +59,24 @@ function controllaAutenticazione(req, res, next) {
     }
 }
 
-
+// --- ROTTA GESTIONE (Il Vigile Urbano) ---
+app.get('/gestione', (req, res) => {
+    const token = req.cookies.admin_token;
+    
+    if (token) {
+        try {
+            // Se ha un token valido, va dritto alla dashboard
+            jwt.verify(token, CHIAVE_SEGRETA_JWT);
+            res.redirect('/admin.html');
+        } catch (err) {
+            // Se il token è scaduto o finto, va al login
+            res.redirect('/login.html');
+        }
+    } else {
+        // Se non ha nessun token, va al login
+        res.redirect('/login.html');
+    }
+});
 // --- ROTTE PUBBLICHE (Aperte a tutti) ---
 
 // 1. Invia i prodotti alla vetrina
