@@ -10,11 +10,12 @@
         h2 { text-align: center; margin-top: 0; color: #007bff; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: bold; margin-bottom: 8px; }
-        input[type="text"], input[type="number"], input[type="password"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        input[type="text"], input[type="number"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
         input[type="file"] { margin-top: 5px; }
         button { background-color: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
         button:hover { background-color: #218838; }
         .link-indietro { display: block; text-align: center; margin-top: 20px; color: #666; text-decoration: none; }
+        .info-foto { font-size: 12px; color: #666; margin-top: 5px; display: block; }
     </style>
 </head>
 <body>
@@ -22,17 +23,16 @@
     <div class="contenitore-form">
         <h2>Inserisci Nuovo Annuncio</h2>
         
-        <!-- Il form invia i dati alla rotta /api/prodotti -->
         <form action="/api/prodotti" method="POST" enctype="multipart/form-data">
             
             <div class="form-group">
                 <label for="titolo">Cosa vendi?</label>
-                <input type="text" id="titolo" name="titolo" placeholder="Es: iPhone 12 Pro 128GB" required>
+                <input type="text" id="titolo" name="titolo" required>
             </div>
 
             <div class="form-group">
                 <label for="prezzo">Prezzo (€)</label>
-                <input type="number" id="prezzo" name="prezzo" placeholder="Es: 450" step="0.01" required>
+                <input type="number" id="prezzo" name="prezzo" step="0.01" required>
             </div>
 
             <div class="form-group">
@@ -45,16 +45,12 @@
 
             <div class="form-group">
                 <label for="immagine">Foto del prodotto</label>
-                <input type="file" id="immagine" name="immagine" accept="image/*">
+                <!-- Il trucco è l'attributo "multiple" che permette di selezionare più file -->
+                <input type="file" id="immagini" name="immagini" accept="image/*" multiple required>
+                <span class="info-foto">Tieni premuto CTRL (o CMD) per selezionare fino a 6 foto.</span>
             </div>
 
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
-
-            <div class="form-group">
-                <label for="password" style="color: #d32f2f;">Password Amministratore</label>
-                <input type="password" id="password" name="password" placeholder="Inserisci la password segreta" required>
-            </div>
-
+            <!-- Il campo password è stato rimosso, il server userà il cookie! -->
             <button type="submit">Pubblica Annuncio</button>
         </form>
 

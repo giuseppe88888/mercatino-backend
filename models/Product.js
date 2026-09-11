@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-const productSchema = new mongoose.Schema({
+const schemaProdotto = new mongoose.Schema({
     titolo: { type: String, required: true },
-    descrizione: { type: String, required: true },
     prezzo: { type: Number, required: true },
     condizione: { type: String },
-    immagine: { type: String } // Il campo per il nome del file
+    // Ora è un Array (racchiuso tra parentesi quadre) per salvare più link
+    immagini: [{ type: String }] 
 });
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = mongoose.model('Product', schemaProdotto);

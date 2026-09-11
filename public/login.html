@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Accesso Area Riservata</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
+        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; background: #007bff; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #messaggio-errore { color: red; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>Area Venditore</h2>
+        <input type="password" id="password" placeholder="Inserisci password admin">
+        <button onclick="faiLogin()">Accedi</button>
+        <p id="messaggio-errore">Password errata!</p>
+    </div>
+
+    <script>
+        async function faiLogin() {
+            const password = document.getElementById('password').value;
+            const msgErrore = document.getElementById('messaggio-errore');
+
+            try {
+                const risposta = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: password })
+                });
+
+                if (risposta.ok) {
+                    // Login corretto, il server ha impostato il cookie
+                    // Ti rimanda automaticamente alla dashboard
+                    window.location.href = '/admin.html';
+                } else {
+                    msgErrore.style.display = 'block';
+                }
+            } catch (err) {
+                alert('Errore di connessione');
+            }
+        }
+    </script>
+</body>
+</html>

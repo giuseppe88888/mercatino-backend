@@ -5,17 +5,20 @@ const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
 const Product = require('./models/Product');
-// La password segreta per gestire i prodotti (cambiala con quella che vuoi)
+const jwt = require('jsonwebtoken'); // NUOVO: Gestore Token
+const cookieParser = require('cookie-parser'); // NUOVO: Gestore Cookie
+
 const PASSWORD_ADMIN = "supersegreta123";
+const CHIAVE_SEGRETA_JWT = "chiave_molto_complessa_e_segreta_12345"; // Serve per criptare il pass
 
-// Forziamo i DNS
 dns.setServers(['8.8.8.8', '8.8.4.4']);
-
 const LINK_STANDARD = "mongodb+srv://pepoforesta05_db_user:jUWRTwEZfskalkwf@cluster0.zrlphhz.mongodb.net/magazzino?appName=Cluster0";
 
 const app = express();
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // Per leggere i dati JSON dal login
+app.use(cookieParser()); // Attiva la lettura dei cookie
 
 // --- CONFIGURAZIONE CLOUDINARY ---
 cloudinary.config({
@@ -27,47 +30,39 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'mercatino_online', // Cloudinary creerà questa cartella per le tue foto
+        folder: 'mercatino_online',
         allowed_formats: ['jpg', 'png', 'jpeg', 'webp']
     }
 });
-
 const upload = multer({ storage: storage });
-// ---------------------------------
 
 mongoose.connect(LINK_STANDARD)
     .then(() => console.log('📦 Database collegato con successo!'))
-    .catch((err) => console.log('❌ L\'errore vero di MongoDB è:', err.message));
+    .catch((err) => console.log('❌ Errore DB:', err.message));
 
-// Rotta per aggiungere un prodotto (PROTETTA)
-app.post('/api/prodotti', upload.single('immagine'), async (req, res) => {
-    // 1. Controlla la password
-    if (req.body.password !== PASSWORD_ADMIN) {
-        return res.status(401).send("Password errata. Non sei autorizzato.");
+
+// --- MIDDLEWARE DI SICUREZZA (Il "Buttafuori") ---
+// Questa funzione intercetta le richieste e controlla se l'utente ha il token valido
+function controllaAutenticazione(req, res, next) {
+    const token = req.cookies.admin_token; // Cerca il pass nel browser
+    
+    if (!token) {
+        return res.status(401).send("Accesso negato. Devi fare il login.");
     }
 
     try {
-        let imageUrl = null;
-        // ... (IL RESTO DEL TUO CODICE PER CARICARE L'IMMAGINE E SALVARE NEL DATABASE RIMANE UGUALE)
-        if (req.file) {
-            imageUrl = req.file.path;
-        }
-        
-        const nuovoProdotto = new Product({
-            titolo: req.body.titolo,
-            prezzo: req.body.prezzo,
-            condizione: req.body.condizione,
-            immagine: imageUrl
-        });
-
-        await nuovoProdotto.save();
-        res.redirect('/admin.html'); // Ti rimanda al pannello di controllo dopo l'aggiunta
-    } catch (errore) {
-        res.status(500).send("Errore nel salvataggio del prodotto: " + errore.message);
+        // Verifica che il pass sia autentico e non falsificato
+        jwt.verify(token, CHIAVE_SEGRETA_JWT);
+        next(); // Pass valido! Lascialo passare.
+    } catch (err) {
+        res.status(401).send("Token non valido o scaduto.");
     }
-});
+}
 
-// Rotta per inviare i prodotti alla vetrina
+
+// --- ROTTE PUBBLICHE (Aperte a tutti) ---
+
+// 1. Invia i prodotti alla vetrina
 app.get('/api/prodotti', async (req, res) => {
     try {
         const tuttiIProdotti = await Product.find();
@@ -76,21 +71,62 @@ app.get('/api/prodotti', async (req, res) => {
         res.status(500).send('Errore nel recupero prodotti: ' + errore.message);
     }
 });
-// Rotta per eliminare un prodotto (PROTETTA)
-app.delete('/api/prodotti/:id', async (req, res) => {
-    // La password in questo caso ci arriva tramite un "header" della richiesta fetch
-    const passwordRicevuta = req.headers['authorization'];
-    
-    if (passwordRicevuta !== PASSWORD_ADMIN) {
-        return res.status(401).send("Password errata. Non sei autorizzato.");
-    }
 
+// 2. Rotta per il Login (Rilascia il pass)
+app.post('/api/login', (req, res) => {
+    const passwordInserita = req.body.password;
+
+    if (passwordInserita === PASSWORD_ADMIN) {
+        // Crea il pass (scade dopo 12 ore)
+        const token = jwt.sign({ ruolo: 'admin' }, CHIAVE_SEGRETA_JWT, { expiresIn: '12h' });
+        
+        // Lo salva nel browser in modo sicuro (impossibile da rubare via Javascript)
+        res.cookie('admin_token', token, { httpOnly: true, maxAge: 12 * 60 * 60 * 1000 });
+        res.status(200).send({ messaggio: 'Login effettuato!' });
+    } else {
+        res.status(401).send({ errore: 'Password errata' });
+    }
+});
+
+// 3. Rotta per il Logout (Strappa il pass)
+app.post('/api/logout', (req, res) => {
+    res.clearCookie('admin_token');
+    res.status(200).send({ messaggio: 'Logout effettuato' });
+});
+
+
+// --- ROTTE PROTETTE (Serve il pass per passare) ---
+// Notare che ho inserito "controllaAutenticazione" in mezzo!
+
+// Rotta per aggiungere un prodotto (Accetta fino a 6 immagini)
+app.post('/api/prodotti', controllaAutenticazione, upload.array('immagini', 6), async (req, res) => {
+    try {
+        // req.files contiene tutte le foto. Estraiamo solo i link di Cloudinary e li mettiamo in una lista
+        const urlsImmagini = req.files ? req.files.map(file => file.path) : [];
+        
+        const nuovoProdotto = new Product({
+            titolo: req.body.titolo,
+            prezzo: req.body.prezzo,
+            condizione: req.body.condizione,
+            immagini: urlsImmagini // Salviamo la lista nel database
+        });
+
+        await nuovoProdotto.save();
+        res.redirect('/admin.html');
+    } catch (errore) {
+        res.status(500).send("Errore salvataggio: " + errore.message);
+    }
+});
+
+// Rotta per eliminare un prodotto
+app.delete('/api/prodotti/:id', controllaAutenticazione, async (req, res) => {
     try {
         const idProdotto = req.params.id; 
         await Product.findByIdAndDelete(idProdotto); 
-        res.send('Prodotto eliminato con successo!');
+        res.send('Prodotto eliminato!');
     } catch (errore) {
-        res.status(500).send('Errore nella cancellazione: ' + errore.message);
+        res.status(500).send('Errore cancellazione: ' + errore.message);
     }
 });
-app.listen(3000, () => console.log('✅ Server acceso e in ascolto sulla porta 3000!'));
+
+app.listen(3000, () => console.log('✅ Server acceso sulla porta 3000!'));
