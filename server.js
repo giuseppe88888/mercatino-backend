@@ -110,16 +110,20 @@ app.post('/api/logout', (req, res) => {
 // Rotta per aggiungere un prodotto (Accetta fino a 6 immagini)
 app.post('/api/prodotti', controllaAutenticazione, upload.array('immagini', 6), async (req, res) => {
     try {
-        // req.files contiene tutte le foto. Estraiamo solo i link di Cloudinary e li mettiamo in una lista
         const urlsImmagini = req.files ? req.files.map(file => file.path) : [];
+        
+        // Genera un codice casuale tipo MER-18492
+        const codiceGenerato = "MER-" + Math.floor(10000 + Math.random() * 90000);
         
         const nuovoProdotto = new Product({
             titolo: req.body.titolo,
             prezzo: req.body.prezzo,
             condizione: req.body.condizione,
-            categoria: req.body.categoria, // <-- DEVE ESSERCI QUESTA RIGA
+            categoria: req.body.categoria,
             descrizione: req.body.descrizione,
-            immagini: urlsImmagini 
+            immagini: urlsImmagini,
+            codice_articolo: codiceGenerato, // Salviamo il codice
+            stato_vendita: req.body.stato_vendita // Salviamo lo stato
         });
 
         await nuovoProdotto.save();

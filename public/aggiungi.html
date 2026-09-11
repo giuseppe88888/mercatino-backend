@@ -3,72 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aggiungi Prodotto</title>
+    <title>Inserisci Annuncio - Il Mio Mercatino</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
-        .contenitore-form { background: white; padding: 30px; border-radius: 12px; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { text-align: center; margin-top: 0; color: #007bff; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0; color: #333; }
+        
+        .navbar { background-color: #111; color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 22px; font-weight: 900; color: white; text-decoration: none; letter-spacing: -0.5px; }
+        .logo span { color: #e53935; }
+        .nav-actions { display: flex; gap: 15px; align-items: center; }
+        .btn-header { color: #ccc; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.2s; }
+        .btn-header:hover { color: white; }
+
+        .container { max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        
+        .form-card { background: white; padding: 35px 30px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+        .form-card h2 { margin-top: 0; margin-bottom: 25px; color: #111; font-size: 24px; text-align: center; }
+        
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; }
-        input[type="text"], input[type="number"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        input[type="file"] { margin-top: 5px; }
-        button { background-color: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
-        button:hover { background-color: #218838; }
-        .link-indietro { display: block; text-align: center; margin-top: 20px; color: #666; text-decoration: none; }
-        .info-foto { font-size: 12px; color: #666; margin-top: 5px; display: block; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #444; font-size: 14px; }
+        
+        input[type="text"], input[type="number"], select, textarea { 
+            width: 100%; padding: 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 15px; background-color: #f9fafb; font-family: inherit; transition: all 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #e53935; background-color: #fff; box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1); }
+        textarea { resize: vertical; }
+
+        /* --- STILI PER UPLOAD FOTO MOBILE --- */
+        .upload-area { border: 2px dashed #d1d5db; border-radius: 8px; padding: 20px; text-align: center; background: #f9fafb; cursor: pointer; position: relative; }
+        .upload-area input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
+        .anteprima-foto { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .anteprima-foto img { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; }
+        
+        button[type="submit"] { background-color: #e53935; color: white; border: none; padding: 16px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.2s; margin-top: 10px; }
+        button[type="submit"]:hover { background-color: #c62828; transform: translateY(-2px); }
+
+        .riga-doppia { display: flex; gap: 15px; }
+        .riga-doppia .form-group { flex: 1; }
+        
+        @media (max-width: 500px) { .riga-doppia { flex-direction: column; gap: 0; } }
     </style>
 </head>
 <body>
 
-    <div class="contenitore-form">
-        <h2>Inserisci Nuovo Annuncio</h2>
-        
-        <form action="/api/prodotti" method="POST" enctype="multipart/form-data">
+    <nav class="navbar">
+        <a href="/admin.html" class="logo">Area<span>Gestione</span></a>
+        <div class="nav-actions">
+            <a href="/index.html" class="btn-header">Vai alla Vetrina</a>
+            <a href="/admin.html" class="btn-header">Torna al Magazzino</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="form-card">
+            <h2>Nuovo Inserimento Rapido</h2>
             
-            <div class="form-group">
-                <label for="titolo">Cosa vendi?</label>
-                <input type="text" id="titolo" name="titolo" required>
-            </div>
+            <form action="/api/prodotti" method="POST" enctype="multipart/form-data">
+                
+                <div class="form-group">
+                    <label for="titolo">Nome Oggetto</label>
+                    <input type="text" id="titolo" name="titolo" placeholder="Es. Orologio Vintage Casio" required>
+                </div>
 
-            <div class="form-group">
-                <label for="prezzo">Prezzo (€)</label>
-                <input type="number" id="prezzo" name="prezzo" step="0.01" required>
-            </div>
+                <div class="riga-doppia">
+                    <div class="form-group">
+                        <label for="prezzo">Prezzo (€)</label>
+                        <input type="number" id="prezzo" name="prezzo" step="0.01" placeholder="0.00" required>
+                    </div>
 
-            <div class="form-group">
-                <label for="condizione">Condizione</label>
-                <select id="condizione" name="condizione">
-                    <option value="Nuovo">Nuovo</option>
-                    <option value="Usato">Usato</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="categoria">Categoria</label>
-                <select id="categoria" name="categoria" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px;">
-                    <option value="Motori">Motori (Auto, Moto...)</option>
-                    <option value="Elettronica">Elettronica e Informatica</option>
-                    <option value="Arredamento">Arredamento e Casa</option>
-                    <option value="Abbigliamento">Abbigliamento e Accessori</option>
-                    <option value="Altro">Altro</option>
-                </select>
-            </div>
-<div class="form-group">
-                <label for="descrizione">Descrizione dell'annuncio</label>
-                <textarea id="descrizione" name="descrizione" rows="4" placeholder="Scrivi tutti i dettagli qui..." style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-family: inherit;"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="immagine">Foto del prodotto</label>
-                <!-- Il trucco è l'attributo "multiple" che permette di selezionare più file -->
-                <input type="file" id="immagini" name="immagini" accept="image/*" multiple required>
-                <span class="info-foto">Tieni premuto CTRL (o CMD) per selezionare fino a 6 foto.</span>
-            </div>
+                    <div class="form-group">
+                        <label for="condizione">Stato Oggetto</label>
+                        <select id="condizione" name="condizione">
+                            <option value="Usato">Usato</option>
+                            <option value="Nuovo">Nuovo</option>
+                        </select>
+                    </div>
+                </div>
 
-            <!-- Il campo password è stato rimosso, il server userà il cookie! -->
-            <button type="submit">Pubblica Annuncio</button>
-        </form>
+                <div class="riga-doppia">
+                    <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <select id="categoria" name="categoria">
+                            <option value="Motori">Motori</option>
+                            <option value="Elettronica">Elettronica</option>
+                            <option value="Arredamento">Arredamento</option>
+                            <option value="Abbigliamento">Abbigliamento</option>
+                            <option value="Altro">Altro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="stato_vendita">Disponibilità</label>
+                        <select id="stato_vendita" name="stato_vendita">
+                            <option value="Disponibile">🟢 Disponibile</option>
+                            <option value="Prenotato">🟡 Prenotato</option>
+                            <option value="Venduto">🔴 Venduto</option>
+                        </select>
+                    </div>
+                </div>
 
-        <a href="/admin.html" class="link-indietro">Torna al Pannello di Controllo</a>
-    </div>
+                <div class="form-group">
+                    <label for="descrizione">Descrizione (facoltativa per inserimento rapido)</label>
+                    <textarea id="descrizione" name="descrizione" rows="4" placeholder="Difetti, accessori inclusi, note..."></textarea>
+                </div>
+                
+                <!-- NUOVA AREA UPLOAD MOBILE-FRIENDLY -->
+                <div class="form-group">
+                    <label>Fotografie (Da 1 a 6)</label>
+                    <div class="upload-area">
+                        <p style="color: #666; font-weight: bold; margin: 0;">📸 Tocca qui per scegliere le foto</p>
+                        <p style="font-size: 12px; color: #999; margin-top: 5px;">(Da smartphone, tieni premuto su una foto nella galleria per selezionarne più di una)</p>
+                        <input type="file" id="immagini" name="immagini" accept="image/*" multiple required onchange="mostraAnteprima(this)">
+                    </div>
+                    <div id="anteprima-contenitore" class="anteprima-foto"></div>
+                </div>
 
+                <button type="submit">Pubblica Annuncio</button>
+            </form>
+
+        </div>
+    </main>
+
+    <script>
+        // Funzione magica per mostrare le anteprime delle foto su smartphone
+        function mostraAnteprima(input) {
+            const contenitore = document.getElementById('anteprima-contenitore');
+            contenitore.innerHTML = ''; // Pulisce le anteprime precedenti
+            
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        contenitore.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+    </script>
 </body>
 </html>
