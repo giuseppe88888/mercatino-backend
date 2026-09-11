@@ -9,7 +9,7 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f5f7; /* Grigio chiaro per far risaltare il bianco */
+            background-color: #f4f5f7;
             margin: 0;
             padding: 0;
             color: #333;
@@ -37,7 +37,7 @@
             letter-spacing: -0.5px;
         }
         .logo span {
-            color: #e53935; /* Rosso acceso stile marketplace */
+            color: #e53935;
         }
 
         .search-container {
@@ -87,23 +87,34 @@
         }
         .btn-inserisci:hover { background-color: #c62828; }
 
-        /* --- BARRA FILTRI SOTTO HEADER --- */
+        /* --- BARRA FILTRI AVANZATA --- */
         .barra-filtri {
             background-color: white;
             padding: 15px 20px;
             border-bottom: 1px solid #e5e7eb;
             margin-bottom: 30px;
             display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .gruppo-filtri {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
             justify-content: center;
         }
 
-        .filtri-condizione {
-            display: flex;
-            gap: 10px;
+        .separatore {
+            width: 1px;
+            height: 30px;
+            background-color: #d1d5db;
         }
 
         .btn-filtro {
-            padding: 8px 18px;
+            padding: 8px 16px;
             border: 1px solid #d1d5db;
             border-radius: 20px;
             background-color: white;
@@ -111,12 +122,22 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 14px;
         }
         .btn-filtro:hover { background-color: #f3f4f6; }
-        .btn-filtro.attivo {
+        
+        /* Colore per i filtri di condizione (Nuovo/Usato) */
+        .btn-condizione.attivo {
             background-color: #333;
             color: white;
             border-color: #333;
+        }
+
+        /* Colore per i filtri di categoria */
+        .btn-categoria.attivo {
+            background-color: #e53935;
+            color: white;
+            border-color: #e53935;
         }
 
         /* --- AREA CONTENUTO CENTRALE --- */
@@ -187,34 +208,34 @@
             font-weight: 800;
             font-size: 20px;
             color: #111;
-            margin: auto 0 10px 0; /* Lo spinge sempre in basso se il titolo è corto */
+            margin: auto 0 10px 0;
         }
 
-        .card-condizione {
-            font-size: 12px;
-            color: #666;
+        .badges {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 11px;
+            color: #555;
             text-transform: uppercase;
             background-color: #f3f4f6;
             padding: 4px 8px;
             border-radius: 4px;
-            align-self: flex-start;
-            font-weight: 600;
+            font-weight: 700;
         }
+        .badge.categoria { background-color: #ffebee; color: #c62828; }
 
         /* --- RESPONSIVE PER SMARTPHONE --- */
         @media (max-width: 768px) {
-            .navbar {
-                flex-wrap: wrap;
-                padding: 12px 15px;
-            }
-            .search-container {
-                order: 3;
-                width: 100%;
-                max-width: 100%;
-                margin-top: 10px;
-            }
-            .btn-login span { display: none; } /* Nasconde la scritta, lascia solo eventuale icona, o riduce l'ingombro */
+            .navbar { flex-wrap: wrap; padding: 12px 15px; }
+            .search-container { order: 3; width: 100%; max-width: 100%; margin-top: 10px; }
+            .btn-login span { display: none; } 
             .btn-inserisci { padding: 8px 12px; font-size: 14px; }
+            .separatore { display: none; }
             .griglia-prodotti { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
             .card img { height: 160px; }
             .card-titolo { font-size: 15px; }
@@ -233,17 +254,30 @@
         </div>
         
         <div class="nav-actions">
-            <a href="/login.html" class="btn-login">Area Personale</a>
+            <a href="/admin.html" class="btn-login">Area Personale</a>
             <a href="/aggiungi.html" class="btn-inserisci">+ Inserisci annuncio</a>
         </div>
     </nav>
 
     <!-- BARRA DEI FILTRI -->
     <div class="barra-filtri">
-        <div class="filtri-condizione">
-            <button class="btn-filtro attivo" data-condizione="tutte">Tutti gli annunci</button>
-            <button class="btn-filtro" data-condizione="nuovo">Solo Nuovo</button>
-            <button class="btn-filtro" data-condizione="usato">Solo Usato</button>
+        <!-- Categorie -->
+        <div class="gruppo-filtri">
+            <button class="btn-filtro btn-categoria attivo" data-categoria="tutte">Tutte le Categorie</button>
+            <button class="btn-filtro btn-categoria" data-categoria="Motori">Motori</button>
+            <button class="btn-filtro btn-categoria" data-categoria="Elettronica">Elettronica</button>
+            <button class="btn-filtro btn-categoria" data-categoria="Arredamento">Arredamento</button>
+            <button class="btn-filtro btn-categoria" data-categoria="Abbigliamento">Abbigliamento</button>
+            <button class="btn-filtro btn-categoria" data-categoria="Altro">Altro</button>
+        </div>
+
+        <div class="separatore"></div>
+
+        <!-- Condizione -->
+        <div class="gruppo-filtri">
+            <button class="btn-filtro btn-condizione attivo" data-condizione="tutte">Tutti gli stati</button>
+            <button class="btn-filtro btn-condizione" data-condizione="nuovo">Solo Nuovo</button>
+            <button class="btn-filtro btn-condizione" data-condizione="usato">Solo Usato</button>
         </div>
     </div>
 
@@ -253,15 +287,17 @@
         <div class="griglia-prodotti" id="vetrina"></div>
     </main>
 
-    <!-- LOGICA JAVASCRIPT (RIMASTA INTATTA) -->
+    <!-- LOGICA JAVASCRIPT -->
     <script>
         let catalogoCompleto = [];
         let filtroCondizioneAttuale = 'tutte';
+        let filtroCategoriaAttuale = 'tutte'; // Nuova variabile per la categoria
 
         const contenitoreVetrina = document.getElementById('vetrina');
         const loadingMessage = document.getElementById('loading');
         const barraRicerca = document.getElementById('barra-ricerca');
-        const bottoniFiltro = document.querySelectorAll('.btn-filtro');
+        const bottoniCondizione = document.querySelectorAll('.btn-condizione');
+        const bottoniCategoria = document.querySelectorAll('.btn-categoria');
 
         async function caricaProdotti() {
             try {
@@ -280,7 +316,7 @@
             contenitoreVetrina.innerHTML = '';
             
             if (prodottiDaMostrare.length === 0) {
-                contenitoreVetrina.innerHTML = '<p style="font-size:18px; color:#666; width:100%; text-align:center;">Nessun prodotto trovato per questa ricerca.</p>';
+                contenitoreVetrina.innerHTML = '<p style="font-size:18px; color:#666; width:100%; text-align:center; grid-column: 1 / -1;">Nessun annuncio trovato con questi filtri.</p>';
                 return;
             }
 
@@ -288,13 +324,18 @@
                 const prezzoFormattato = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
                 const immagineSrc = (prodotto.immagini && prodotto.immagini.length > 0) ? prodotto.immagini[0] : 'https://via.placeholder.com/400x300?text=No+Foto';
                 
+                // Crea la card
                 const cardHTML = `
                     <div class="card" onclick="window.location.href='/prodotto.html?id=${prodotto._id}'">
                         <img src="${immagineSrc}" alt="${prodotto.titolo}">
                         <div class="card-dettagli">
                             <h3 class="card-titolo">${prodotto.titolo}</h3>
                             <p class="card-prezzo">${prezzoFormattato}</p>
-                            <span class="card-condizione">${prodotto.condizione || 'Non specificato'}</span>
+                            
+                            <div class="badges">
+                                ${prodotto.categoria ? `<span class="badge categoria">${prodotto.categoria}</span>` : ''}
+                                <span class="badge">${prodotto.condizione || 'Non specificato'}</span>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -303,27 +344,48 @@
             });
         }
 
+        // Il "Cervello" dei filtri aggiornato
         function applicaFiltri() {
             const testoRicerca = barraRicerca.value.toLowerCase();
             
             const prodottiFiltrati = catalogoCompleto.filter(prodotto => {
+                // 1. Controllo Testo
                 const titoloCorrisponde = prodotto.titolo.toLowerCase().includes(testoRicerca);
+                
+                // 2. Controllo Condizione (Nuovo/Usato)
                 const condizioneCorrisponde = (filtroCondizioneAttuale === 'tutte') || 
                                               (prodotto.condizione && prodotto.condizione.toLowerCase() === filtroCondizioneAttuale);
                 
-                return titoloCorrisponde && condizioneCorrisponde;
+                // 3. Controllo Categoria
+                const categoriaCorrisponde = (filtroCategoriaAttuale === 'tutte') || 
+                                             (prodotto.categoria && prodotto.categoria === filtroCategoriaAttuale);
+                
+                // Mostra il prodotto solo se supera TUTTI E TRE i controlli
+                return titoloCorrisponde && condizioneCorrisponde && categoriaCorrisponde;
             });
 
             mostraProdotti(prodottiFiltrati);
         }
 
+        // Eventi per la barra di ricerca
         barraRicerca.addEventListener('input', applicaFiltri);
 
-        bottoniFiltro.forEach(bottone => {
+        // Eventi per i bottoni Condizione (Nuovo/Usato)
+        bottoniCondizione.forEach(bottone => {
             bottone.addEventListener('click', (evento) => {
-                bottoniFiltro.forEach(b => b.classList.remove('attivo'));
+                bottoniCondizione.forEach(b => b.classList.remove('attivo'));
                 evento.target.classList.add('attivo');
                 filtroCondizioneAttuale = evento.target.dataset.condizione;
+                applicaFiltri();
+            });
+        });
+
+        // Eventi per i bottoni Categoria
+        bottoniCategoria.forEach(bottone => {
+            bottone.addEventListener('click', (evento) => {
+                bottoniCategoria.forEach(b => b.classList.remove('attivo'));
+                evento.target.classList.add('attivo');
+                filtroCategoriaAttuale = evento.target.dataset.categoria;
                 applicaFiltri();
             });
         });
