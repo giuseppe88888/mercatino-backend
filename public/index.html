@@ -3,230 +3,332 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Il Mio Mercatino Online</title>
+    <title>Il Mio Mercatino</title>
     <style>
-        /* Stili Base e Reset */
+        /* --- STILI BASE E RESET --- */
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f5f7; /* Grigio chiaro per far risaltare il bianco */
             margin: 0;
-            padding: 20px;
+            padding: 0;
             color: #333;
         }
         
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
+        /* --- HEADER (NAVBAR STILE SUBITO) --- */
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
         }
 
-        /* Barra di Ricerca e Filtri */
-        .controlli {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 600px;
-            margin: 0 auto 30px auto;
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            color: #333;
+            text-decoration: none;
+            letter-spacing: -0.5px;
         }
-        
+        .logo span {
+            color: #e53935; /* Rosso acceso stile marketplace */
+        }
+
+        .search-container {
+            flex-grow: 1;
+            max-width: 600px;
+        }
+
         .ricerca {
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 25px;
             width: 100%;
-            box-sizing: border-box;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background-color: #f9fafb;
+            transition: all 0.2s;
+        }
+        .ricerca:focus {
+            outline: none;
+            border-color: #e53935;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-login {
+            color: #555;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .btn-login:hover { color: #e53935; }
+
+        .btn-inserisci {
+            background-color: #e53935;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+        .btn-inserisci:hover { background-color: #c62828; }
+
+        /* --- BARRA FILTRI SOTTO HEADER --- */
+        .barra-filtri {
+            background-color: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
         }
 
         .filtri-condizione {
             display: flex;
-            justify-content: center;
             gap: 10px;
         }
 
         .btn-filtro {
-            padding: 8px 16px;
-            border: none;
+            padding: 8px 18px;
+            border: 1px solid #d1d5db;
             border-radius: 20px;
-            background-color: #ddd;
+            background-color: white;
+            color: #555;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.2s;
         }
-
-        .btn-filtro:hover, .btn-filtro.attivo {
-            background-color: #007bff;
+        .btn-filtro:hover { background-color: #f3f4f6; }
+        .btn-filtro.attivo {
+            background-color: #333;
             color: white;
+            border-color: #333;
         }
 
-        /* Loading Spinner */
+        /* --- AREA CONTENUTO CENTRALE --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 40px 20px;
+        }
+
         #loading {
             text-align: center;
             font-size: 18px;
             color: #666;
             margin-top: 50px;
+            font-weight: 500;
         }
 
-        /* Griglia Prodotti */
+        /* --- GRIGLIA E CARD --- */
         .griglia-prodotti {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
         }
 
-        /* Card Prodotto */
         .card {
             background: white;
-            border-radius: 12px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s ease-in-out;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
-
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+            border-color: #d1d5db;
         }
 
         .card img {
             width: 100%;
-            height: 200px;
+            height: 220px;
             object-fit: cover;
+            border-bottom: 1px solid #f3f4f6;
         }
 
         .card-dettagli {
-            padding: 15px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
         .card-titolo {
-            font-size: 18px;
-            margin: 0 0 10px 0;
-            white-space: nowrap;
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            color: #111;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
+            line-height: 1.3;
         }
 
         .card-prezzo {
-            font-weight: bold;
+            font-weight: 800;
             font-size: 20px;
-            color: #d32f2f;
-            margin: 0 0 5px 0;
+            color: #111;
+            margin: auto 0 10px 0; /* Lo spinge sempre in basso se il titolo è corto */
         }
 
         .card-condizione {
             font-size: 12px;
             color: #666;
             text-transform: uppercase;
-            background-color: #eee;
-            padding: 3px 8px;
-            border-radius: 10px;
-            display: inline-block;
+            background-color: #f3f4f6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            align-self: flex-start;
+            font-weight: 600;
+        }
+
+        /* --- RESPONSIVE PER SMARTPHONE --- */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                padding: 12px 15px;
+            }
+            .search-container {
+                order: 3;
+                width: 100%;
+                max-width: 100%;
+                margin-top: 10px;
+            }
+            .btn-login span { display: none; } /* Nasconde la scritta, lascia solo eventuale icona, o riduce l'ingombro */
+            .btn-inserisci { padding: 8px 12px; font-size: 14px; }
+            .griglia-prodotti { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+            .card img { height: 160px; }
+            .card-titolo { font-size: 15px; }
+            .card-prezzo { font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Vetrina dell'Usato</h1>
-    </div>
-
-    <!-- Sezione Filtri -->
-    <div class="controlli">
-        <input type="text" id="barra-ricerca" class="ricerca" placeholder="Cosa stai cercando?">
+    <!-- NAVBAR IN ALTO -->
+    <nav class="navbar">
+        <a href="/index.html" class="logo">IlMio<span>Mercatino</span></a>
         
+        <div class="search-container">
+            <input type="text" id="barra-ricerca" class="ricerca" placeholder="Cosa stai cercando oggi?">
+        </div>
+        
+        <div class="nav-actions">
+            <a href="/login.html" class="btn-login">Area Personale</a>
+            <a href="/aggiungi.html" class="btn-inserisci">+ Inserisci annuncio</a>
+        </div>
+    </nav>
+
+    <!-- BARRA DEI FILTRI -->
+    <div class="barra-filtri">
         <div class="filtri-condizione">
-            <button class="btn-filtro attivo" data-condizione="tutte">Tutte</button>
-            <button class="btn-filtro" data-condizione="nuovo">Nuovo</button>
-            <button class="btn-filtro" data-condizione="usato">Usato</button>
+            <button class="btn-filtro attivo" data-condizione="tutte">Tutti gli annunci</button>
+            <button class="btn-filtro" data-condizione="nuovo">Solo Nuovo</button>
+            <button class="btn-filtro" data-condizione="usato">Solo Usato</button>
         </div>
     </div>
 
-    <!-- Stato di caricamento -->
-    <div id="loading">Risveglio del server in corso... attendi qualche secondo. ☕</div>
+    <!-- CONTENITORE CENTRALE -->
+    <main class="container">
+        <div id="loading">Risveglio del server in corso... attendi qualche secondo. ☕</div>
+        <div class="griglia-prodotti" id="vetrina"></div>
+    </main>
 
-    <!-- Contenitore della Griglia -->
-    <div class="griglia-prodotti" id="vetrina"></div>
+    <!-- LOGICA JAVASCRIPT (RIMASTA INTATTA) -->
+    <script>
+        let catalogoCompleto = [];
+        let filtroCondizioneAttuale = 'tutte';
 
-<script>
-    let catalogoCompleto = [];
-    let filtroCondizioneAttuale = 'tutte';
+        const contenitoreVetrina = document.getElementById('vetrina');
+        const loadingMessage = document.getElementById('loading');
+        const barraRicerca = document.getElementById('barra-ricerca');
+        const bottoniFiltro = document.querySelectorAll('.btn-filtro');
 
-    const contenitoreVetrina = document.getElementById('vetrina');
-    const loadingMessage = document.getElementById('loading');
-    const barraRicerca = document.getElementById('barra-ricerca');
-    const bottoniFiltro = document.querySelectorAll('.btn-filtro');
-
-    async function caricaProdotti() {
-        try {
-            const risposta = await fetch('/api/prodotti');
-            catalogoCompleto = await risposta.json();
-            
-            loadingMessage.style.display = 'none';
-            mostraProdotti(catalogoCompleto);
-        } catch (errore) {
-            loadingMessage.innerText = '❌ Errore nel caricamento dei prodotti.';
-            console.error('Errore:', errore);
-        }
-    }
-
-    function mostraProdotti(prodottiDaMostrare) {
-        contenitoreVetrina.innerHTML = '';
-        
-        if (prodottiDaMostrare.length === 0) {
-            contenitoreVetrina.innerHTML = '<p>Nessun prodotto trovato.</p>';
-            return;
+        async function caricaProdotti() {
+            try {
+                const risposta = await fetch('/api/prodotti');
+                catalogoCompleto = await risposta.json();
+                
+                loadingMessage.style.display = 'none';
+                mostraProdotti(catalogoCompleto);
+            } catch (errore) {
+                loadingMessage.innerText = '❌ Errore nel caricamento dei prodotti.';
+                console.error('Errore:', errore);
+            }
         }
 
-        prodottiDaMostrare.forEach(prodotto => {
-            const prezzoFormattato = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
+        function mostraProdotti(prodottiDaMostrare) {
+            contenitoreVetrina.innerHTML = '';
             
-            // Prende la prima immagine dall'array, se non c'è mette il segnaposto
-            const immagineSrc = (prodotto.immagini && prodotto.immagini.length > 0) ? prodotto.immagini[0] : 'https://via.placeholder.com/250?text=No+Foto';
-            
-            // Creazione della card Cliccabile che porta alla pagina prodotto.html
-            const cardHTML = `
-                <div class="card" onclick="window.location.href='/prodotto.html?id=${prodotto._id}'">
-                    <img src="${immagineSrc}" alt="${prodotto.titolo}">
-                    <div class="card-dettagli">
-                        <h3 class="card-titolo">${prodotto.titolo}</h3>
-                        <p class="card-prezzo">${prezzoFormattato}</p>
-                        <span class="card-condizione">${prodotto.condizione || 'Non specificato'}</span>
+            if (prodottiDaMostrare.length === 0) {
+                contenitoreVetrina.innerHTML = '<p style="font-size:18px; color:#666; width:100%; text-align:center;">Nessun prodotto trovato per questa ricerca.</p>';
+                return;
+            }
+
+            prodottiDaMostrare.forEach(prodotto => {
+                const prezzoFormattato = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
+                const immagineSrc = (prodotto.immagini && prodotto.immagini.length > 0) ? prodotto.immagini[0] : 'https://via.placeholder.com/400x300?text=No+Foto';
+                
+                const cardHTML = `
+                    <div class="card" onclick="window.location.href='/prodotto.html?id=${prodotto._id}'">
+                        <img src="${immagineSrc}" alt="${prodotto.titolo}">
+                        <div class="card-dettagli">
+                            <h3 class="card-titolo">${prodotto.titolo}</h3>
+                            <p class="card-prezzo">${prezzoFormattato}</p>
+                            <span class="card-condizione">${prodotto.condizione || 'Non specificato'}</span>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                contenitoreVetrina.innerHTML += cardHTML;
+            });
+        }
+
+        function applicaFiltri() {
+            const testoRicerca = barraRicerca.value.toLowerCase();
             
-            contenitoreVetrina.innerHTML += cardHTML;
+            const prodottiFiltrati = catalogoCompleto.filter(prodotto => {
+                const titoloCorrisponde = prodotto.titolo.toLowerCase().includes(testoRicerca);
+                const condizioneCorrisponde = (filtroCondizioneAttuale === 'tutte') || 
+                                              (prodotto.condizione && prodotto.condizione.toLowerCase() === filtroCondizioneAttuale);
+                
+                return titoloCorrisponde && condizioneCorrisponde;
+            });
+
+            mostraProdotti(prodottiFiltrati);
+        }
+
+        barraRicerca.addEventListener('input', applicaFiltri);
+
+        bottoniFiltro.forEach(bottone => {
+            bottone.addEventListener('click', (evento) => {
+                bottoniFiltro.forEach(b => b.classList.remove('attivo'));
+                evento.target.classList.add('attivo');
+                filtroCondizioneAttuale = evento.target.dataset.condizione;
+                applicaFiltri();
+            });
         });
-    }
 
-    function applicaFiltri() {
-        const testoRicerca = barraRicerca.value.toLowerCase();
-        
-        const prodottiFiltrati = catalogoCompleto.filter(prodotto => {
-            const titoloCorrisponde = prodotto.titolo.toLowerCase().includes(testoRicerca);
-            const condizioneCorrisponde = (filtroCondizioneAttuale === 'tutte') || 
-                                          (prodotto.condizione && prodotto.condizione.toLowerCase() === filtroCondizioneAttuale);
-            
-            return titoloCorrisponde && condizioneCorrisponde;
-        });
-
-        mostraProdotti(prodottiFiltrati);
-    }
-
-    barraRicerca.addEventListener('input', applicaFiltri);
-
-    bottoniFiltro.forEach(bottone => {
-        bottone.addEventListener('click', (evento) => {
-            bottoniFiltro.forEach(b => b.classList.remove('attivo'));
-            evento.target.classList.add('attivo');
-            filtroCondizioneAttuale = evento.target.dataset.condizione;
-            applicaFiltri();
-        });
-    });
-
-    caricaProdotti();
-
-</script>
+        caricaProdotti();
+    </script>
 </body>
 </html>
