@@ -9,74 +9,68 @@
         * { box-sizing: border-box; }
         body { font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0; color: #333; }
         
-        /* --- HEADER (NAVBAR STILE SUBITO) --- */
+        /* --- HEADER --- */
         .navbar { background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; }
         .logo { font-size: 24px; font-weight: 900; color: #333; text-decoration: none; letter-spacing: -0.5px; }
         .logo span { color: #e53935; }
         .btn-header { color: #555; text-decoration: none; font-weight: 600; font-size: 15px; }
-        .btn-header:hover { color: #e53935; }
-
-        /* --- LAYOUT PRINCIPALE A DUE COLONNE --- */
+        
+        /* --- LAYOUT A DUE COLONNE --- */
         .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
         .breadcrumb { margin-bottom: 20px; font-size: 14px; color: #666; }
         .breadcrumb a { color: #007bff; text-decoration: none; }
-        .breadcrumb a:hover { text-decoration: underline; }
-
-        .layout-prodotto { display: flex; gap: 30px; align-items: flex-start; }
         
-        .colonna-sinistra { flex: 2; min-width: 0; } /* min-width 0 serve per evitare che le foto sbordino */
+        .layout-prodotto { display: flex; gap: 30px; align-items: flex-start; }
+        .colonna-sinistra { flex: 2; min-width: 0; } 
         .colonna-destra { flex: 1; min-width: 320px; position: sticky; top: 90px; }
 
-        /* --- STILI DELLE CARD --- */
         .card { background: white; border-radius: 8px; border: 1px solid #e5e7eb; padding: 25px; margin-bottom: 20px; }
 
-        /* Galleria Immagini */
-        .foto-principale-container { width: 100%; height: 450px; background-color: #f9fafb; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        /* --- IMMAGINI E BADGE --- */
+        .foto-principale-container { width: 100%; height: 450px; background-color: #f9fafb; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; }
         .foto-principale { max-width: 100%; max-height: 100%; object-fit: contain; }
         
         .miniature { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
         .miniature img { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; opacity: 0.6; transition: 0.2s; }
-        .miniature img:hover, .miniature img.attiva { opacity: 1; border-color: #e53935; }
+        .miniature img.attiva { opacity: 1; border-color: #e53935; }
 
-        /* Titolo e Prezzo (Colonna Destra) */
-        h1 { margin: 0 0 15px 0; font-size: 24px; line-height: 1.3; color: #111; }
+        h1 { margin: 0 0 5px 0; font-size: 24px; line-height: 1.3; color: #111; }
+        .codice-articolo { font-size: 13px; color: #888; font-family: monospace; margin-bottom: 15px; display: block; }
         .prezzo { font-size: 32px; font-weight: 900; color: #111; margin-bottom: 20px; }
         
-        .badges { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .badges { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
         .badge { font-size: 12px; color: #555; text-transform: uppercase; background-color: #f3f4f6; padding: 6px 10px; border-radius: 4px; font-weight: 700; }
         .badge.categoria { background-color: #ffebee; color: #c62828; }
+        
+        /* Nuovi Badge di Stato */
+        .badge.stato-disponibile { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .badge.stato-prenotato { background-color: #fef08a; color: #854d0e; border: 1px solid #fde047; }
+        .badge.stato-venduto { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
 
         /* Bottone WhatsApp */
-        .btn-whatsapp { background: #25D366; color: white; text-align: center; text-decoration: none; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 18px; display: flex; justify-content: center; align-items: center; gap: 10px; transition: background 0.2s; width: 100%; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2); }
+        .btn-whatsapp { background: #25D366; color: white; text-align: center; text-decoration: none; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 18px; display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; }
         .btn-whatsapp:hover { background: #1ebe57; transform: translateY(-2px); }
+        .btn-whatsapp.disabilitato { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; pointer-events: none; }
 
-        /* Descrizione */
         h3 { font-size: 18px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; margin-top: 0; }
         .descrizione { font-size: 16px; line-height: 1.6; color: #444; white-space: pre-wrap; margin-top: 15px; }
 
-        /* --- RESPONSIVE PER SMARTPHONE --- */
         @media (max-width: 850px) {
             .layout-prodotto { flex-direction: column; }
-            .colonna-destra { width: 100%; min-width: auto; position: static; }
+            .colonna-destra { width: 100%; position: static; }
             .foto-principale-container { height: 300px; }
-            h1 { font-size: 20px; }
-            .prezzo { font-size: 28px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR IN ALTO -->
     <nav class="navbar">
         <a href="/index.html" class="logo">IlMio<span>Mercatino</span></a>
         <a href="/index.html" class="btn-header">Torna alla Vetrina</a>
     </nav>
 
-    <!-- CONTENITORE DINAMICO -->
     <main class="container" id="dettaglio-prodotto">
-        <div style="text-align: center; margin-top: 50px; font-size: 18px; color: #666;">
-            Caricamento annuncio in corso...
-        </div>
+        <div style="text-align: center; margin-top: 50px;">Caricamento in corso...</div>
     </main>
 
 <script>
@@ -84,41 +78,48 @@
     const idProdotto = urlParams.get('id');
     const contenitore = document.getElementById('dettaglio-prodotto');
     
-    // SOSTITUISCI QUESTO NUMERO CON IL TUO (senza + o spazi, es: 393331234567)
+    // IL TUO NUMERO (es: 393331234567)
     const numeroWhatsApp = "393331234567"; 
 
     async function caricaProdotto() {
-        if (!idProdotto) {
-            contenitore.innerHTML = "<h2 style='text-align:center;'>Prodotto non trovato.</h2>";
-            return;
-        }
-
+        if (!idProdotto) return contenitore.innerHTML = "<h2>Prodotto non trovato.</h2>";
         try {
             const risposta = await fetch('/api/prodotti/' + idProdotto);
-            if (!risposta.ok) throw new Error("Prodotto inesistente");
+            if (!risposta.ok) throw new Error("Inesistente");
             const prodotto = await risposta.json();
-            
             mostraProdotto(prodotto);
         } catch (errore) {
-            contenitore.innerHTML = "<h2 style='text-align:center;'>Errore: " + errore.message + "</h2>";
+            contenitore.innerHTML = "<h2>Errore: " + errore.message + "</h2>";
         }
     }
 
     function mostraProdotto(prodotto) {
-        const prezzoFormattato = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
-        const messaggioWA = encodeURIComponent("Ciao! Ti contatto per il tuo annuncio: " + prodotto.titolo);
-        const linkWA = `https://wa.me/${numeroWhatsApp}?text=${messaggioWA}`;
+        const prezzo = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
         
-        let immaginiArray = prodotto.immagini && prodotto.immagini.length > 0 ? prodotto.immagini : ['https://via.placeholder.com/800x600?text=Nessuna+Foto'];
+        // RECUPERA I NUOVI DATI (o usa valori di default se è un vecchio annuncio)
+        const stato = prodotto.stato_vendita || 'Disponibile';
+        const codice = prodotto.codice_articolo || 'N/A';
         
-        // Creazione HTML Miniature
-        let miniatureHTML = '';
-        if (immaginiArray.length > 1) {
-            immaginiArray.forEach((imgUrl, index) => {
-                let classeAttiva = index === 0 ? 'attiva' : '';
-                miniatureHTML += `<img src="${imgUrl}" class="${classeAttiva}" onclick="cambiaFoto(this, '${imgUrl}')" alt="Miniatura">`;
-            });
+        // COMPOSIZIONE MESSAGGIO WHATSAPP PROFESSIONALE
+        const msg = encodeURIComponent(`Ciao! Sono interessato all'articolo #${codice} - ${prodotto.titolo}. È ancora disponibile?`);
+        const linkWA = `https://wa.me/${numeroWhatsApp}?text=${msg}`;
+        
+        // CLASSE CSS PER IL BADGE DI STATO
+        let classeStato = 'stato-disponibile';
+        let iconaStato = '🟢';
+        let btnDisabilitato = '';
+        let testoBtn = 'Contatta su WhatsApp';
+
+        if (stato === 'Prenotato') {
+            classeStato = 'stato-prenotato'; iconaStato = '🟡';
+        } else if (stato === 'Venduto') {
+            classeStato = 'stato-venduto'; iconaStato = '🔴';
+            btnDisabilitato = 'disabilitato'; 
+            testoBtn = 'Articolo non più disponibile';
         }
+        
+        let immagini = prodotto.immagini && prodotto.immagini.length > 0 ? prodotto.immagini : ['https://via.placeholder.com/800x600?text=No+Foto'];
+        let miniatureHTML = immagini.map((url, i) => `<img src="${url}" class="${i===0?'attiva':''}" onclick="cambiaFoto(this, '${url}')">`).join('');
 
         contenitore.innerHTML = `
             <div class="breadcrumb">
@@ -126,42 +127,37 @@
             </div>
 
             <div class="layout-prodotto">
-                
-                <!-- COLONNA SINISTRA: Foto e Descrizione -->
+                <!-- SINISTRA: Foto e Descrizione -->
                 <div class="colonna-sinistra">
                     <div class="card" style="padding: 15px;">
                         <div class="foto-principale-container">
-                            <img src="${immaginiArray[0]}" id="foto-grande" class="foto-principale" alt="${prodotto.titolo}">
+                            <img src="${immagini[0]}" id="foto-grande" class="foto-principale">
                         </div>
-                        <div class="miniature">
-                            ${miniatureHTML}
-                        </div>
+                        <div class="miniature">${miniatureHTML}</div>
                     </div>
-
                     <div class="card">
                         <h3>Descrizione dell'annuncio</h3>
-                        <div class="descrizione">${prodotto.descrizione || 'Nessuna descrizione inserita per questo annuncio.'}</div>
+                        <div class="descrizione">${prodotto.descrizione || 'Nessuna descrizione inserita.'}</div>
                     </div>
                 </div>
                 
-                <!-- COLONNA DESTRA: Prezzo e Contatti -->
+                <!-- DESTRA: Prezzo e Contatti -->
                 <div class="colonna-destra">
                     <div class="card">
                         <div class="badges">
+                            <span class="badge ${classeStato}">${iconaStato} ${stato}</span>
                             ${prodotto.categoria ? `<span class="badge categoria">${prodotto.categoria}</span>` : ''}
-                            <span class="badge">${prodotto.condizione || 'Non specificato'}</span>
+                            <span class="badge">${prodotto.condizione || 'Usato'}</span>
                         </div>
                         
                         <h1>${prodotto.titolo}</h1>
-                        <div class="prezzo">${prezzoFormattato}</div>
+                        <span class="codice-articolo">Rif: #${codice}</span>
+                        <div class="prezzo">${prezzo}</div>
                         
                         <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;">
                         
-                        <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Venditore Privato</p>
-                        
-                        <a href="${linkWA}" target="_blank" class="btn-whatsapp">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.898-4.45 9.898-9.892 0-2.64-1.027-5.119-2.894-6.985-1.866-1.867-4.346-2.895-6.984-2.896-5.448 0-9.898 4.45-9.898 9.892 0 2.016.596 3.732 1.592 5.408l-1.085 3.963 4.085-1.082zm7.36-5.86c-.401-.2-2.37-1.171-2.738-1.306-.368-.136-.636-.201-.904.201-.268.402-1.037 1.305-1.272 1.573-.234.267-.47.301-.871.101-2.12-.996-3.864-2.617-4.708-4.836-.104-.268.106-.412.304-.61.18-.18.401-.47.601-.705.201-.235.268-.402.402-.67.134-.268.067-.502-.033-.702-.101-.202-.904-2.18-1.238-2.984-.325-.785-.655-.679-.904-.691-.233-.012-.501-.012-.769-.012-.268 0-.704.101-1.072.502-.368.402-1.405 1.373-1.405 3.348 0 1.975 1.439 3.884 1.639 4.152.201.268 2.833 4.323 6.861 6.061 2.89 1.246 3.659 1.134 4.397.969.738-.166 2.37-1.129 2.705-2.217.334-1.088.334-2.02.234-2.217-.101-.198-.368-.302-.769-.503z"/></svg>
-                            Contatta su WhatsApp
+                        <a href="${linkWA}" target="_blank" class="btn-whatsapp ${btnDisabilitato}">
+                            💬 ${testoBtn}
                         </a>
                     </div>
                 </div>
@@ -169,13 +165,10 @@
         `;
     }
 
-    // Funzione per cambiare l'immagine grande cliccando sulle miniature
-    window.cambiaFoto = function(elementoMiniatura, urlImmagine) {
-        document.getElementById('foto-grande').src = urlImmagine;
-        
-        // Aggiorna il bordo rosso sulla miniatura cliccata
+    window.cambiaFoto = function(miniatura, url) {
+        document.getElementById('foto-grande').src = url;
         document.querySelectorAll('.miniature img').forEach(img => img.classList.remove('attiva'));
-        elementoMiniatura.classList.add('attiva');
+        miniatura.classList.add('attiva');
     }
 
     caricaProdotto();

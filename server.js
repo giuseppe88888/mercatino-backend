@@ -5,8 +5,8 @@ const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
 const Product = require('./models/Product');
-const jwt = require('jsonwebtoken'); // NUOVO: Gestore Token
-const cookieParser = require('cookie-parser'); // NUOVO: Gestore Cookie
+const jwt = require('jsonwebtoken'); // Gestore Token
+const cookieParser = require('cookie-parser'); // Gestore Cookie
 
 const PASSWORD_ADMIN = "supersegreta123";
 const CHIAVE_SEGRETA_JWT = "chiave_molto_complessa_e_segreta_12345"; // Serve per criptare il pass
@@ -17,7 +17,7 @@ const LINK_STANDARD = "mongodb+srv://pepoforesta05_db_user:jUWRTwEZfskalkwf@clus
 const app = express();
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); // Per leggere i dati JSON dal login
+app.use(express.json()); // Per leggere i dati JSON dal login (e ora anche dalla PATCH)
 app.use(cookieParser()); // Attiva la lettura dei cookie
 
 // --- CONFIGURAZIONE CLOUDINARY ---
@@ -71,6 +71,7 @@ app.get('/api/prodotti', async (req, res) => {
         res.status(500).send('Errore nel recupero prodotti: ' + errore.message);
     }
 });
+
 // Rotta per recuperare i dettagli di un singolo prodotto
 app.get('/api/prodotti/:id', async (req, res) => {
     try {
@@ -81,6 +82,7 @@ app.get('/api/prodotti/:id', async (req, res) => {
         res.status(500).send('Errore nel recupero prodotto: ' + errore.message);
     }
 });
+
 // 2. Rotta per il Login (Rilascia il pass)
 app.post('/api/login', (req, res) => {
     const passwordInserita = req.body.password;
@@ -105,7 +107,6 @@ app.post('/api/logout', (req, res) => {
 
 
 // --- ROTTE PROTETTE (Serve il pass per passare) ---
-// Notare che ho inserito "controllaAutenticazione" in mezzo!
 
 // Rotta per aggiungere un prodotto (Accetta fino a 6 immagini)
 app.post('/api/prodotti', controllaAutenticazione, upload.array('immagini', 6), async (req, res) => {
@@ -141,6 +142,27 @@ app.delete('/api/prodotti/:id', controllaAutenticazione, async (req, res) => {
         res.send('Prodotto eliminato!');
     } catch (errore) {
         res.status(500).send('Errore cancellazione: ' + errore.message);
+    }
+});
+
+// *** NUOVA ROTTA: Cambia lo Stato di Vendita di un prodotto ***
+app.patch('/api/prodotti/:id/stato', controllaAutenticazione, async (req, res) => {
+    try {
+        const idProdotto = req.params.id;
+        const nuovoStato = req.body.stato_vendita; // Deve essere 'Disponibile' o 'Venduto'
+        
+        // Trova il prodotto e aggiorna solo il campo stato_vendita
+        const prodottoAggiornato = await Product.findByIdAndUpdate(
+            idProdotto,
+            { stato_vendita: nuovoStato },
+            { new: true } // Restituisce il documento aggiornato
+        );
+        
+        if (!prodottoAggiornato) return res.status(404).send('Prodotto non trovato');
+        
+        res.status(200).send(prodottoAggiornato);
+    } catch (errore) {
+        res.status(500).send('Errore aggiornamento stato: ' + errore.message);
     }
 });
 
