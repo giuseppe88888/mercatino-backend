@@ -4,7 +4,7 @@ const schemaProdotto = new mongoose.Schema({
     titolo: { type: String, required: true },
     prezzo: { type: Number, required: true },
     condizione: { type: String },
-    // Ora è un Array (racchiuso tra parentesi quadre) per salvare più link
+    descrizione: { type: String },
     immagini: [{ type: String }] 
 });
 

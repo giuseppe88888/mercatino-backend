@@ -181,8 +181,8 @@
 
         prodottiDaMostrare.forEach(prodotto => {
             const prezzoFormattato = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
-            const immagineSrc = prodotto.immagine ? prodotto.immagine : 'https://via.placeholder.com/250?text=No+Foto';
-
+// Prende la prima immagine dall'array, se non c'è mette il segnaposto
+            const immagineSrc = (prodotto.immagini && prodotto.immagini.length > 0) ? prodotto.immagini[0] : 'https://via.placeholder.com/250?text=No+Foto';
             // Ho rimosso il bottone "Elimina" da questa pagina pubblica
             const cardHTML = `
                 <div class="card">

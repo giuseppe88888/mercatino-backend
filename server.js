@@ -108,7 +108,8 @@ app.post('/api/prodotti', controllaAutenticazione, upload.array('immagini', 6), 
             titolo: req.body.titolo,
             prezzo: req.body.prezzo,
             condizione: req.body.condizione,
-            immagini: urlsImmagini // Salviamo la lista nel database
+            descrizione: req.body.descrizione, // <-- DEVE ESSERCI QUESTA RIGA
+            immagini: urlsImmagini 
         });
 
         await nuovoProdotto.save();
