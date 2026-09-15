@@ -7,192 +7,57 @@
     <style>
         /* --- STILI BASE E RESET --- */
         * { box-sizing: border-box; }
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f5f7;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
+        body { font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0; color: #333; }
         
-        /* --- HEADER (PULITO E SENZA LINK ADMIN) --- */
-        .navbar {
-            background-color: #ffffff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-        }
+        /* --- HEADER --- */
+        .navbar { background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+        .logo { font-size: 24px; font-weight: 900; color: #333; text-decoration: none; letter-spacing: -0.5px; }
+        .logo span { color: #e53935; }
+        .search-container { flex-grow: 1; max-width: 600px; }
+        .ricerca { width: 100%; padding: 12px 20px; font-size: 16px; border: 1px solid #d1d5db; border-radius: 8px; background-color: #f9fafb; transition: all 0.2s; }
+        .ricerca:focus { outline: none; border-color: #e53935; background-color: #fff; box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1); }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 900;
-            color: #333;
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
-        .logo span {
-            color: #e53935;
-        }
-
-        .search-container {
-            flex-grow: 1;
-            max-width: 600px;
-        }
-
-        .ricerca {
-            width: 100%;
-            padding: 12px 20px;
-            font-size: 16px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            background-color: #f9fafb;
-            transition: all 0.2s;
-        }
-        .ricerca:focus {
-            outline: none;
-            border-color: #e53935;
-            background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
-        }
-
-        /* --- BARRA FILTRI AVANZATA --- */
-        .barra-filtri {
-            background-color: white;
-            padding: 15px 20px;
-            border-bottom: 1px solid #e5e7eb;
-            margin-bottom: 30px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .gruppo-filtri {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .separatore {
-            width: 1px;
-            height: 30px;
-            background-color: #d1d5db;
-        }
-
-        .btn-filtro {
-            padding: 8px 16px;
-            border: 1px solid #d1d5db;
-            border-radius: 20px;
-            background-color: white;
-            color: #555;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-        }
+        /* --- BARRA FILTRI --- */
+        .barra-filtri { background-color: white; padding: 15px 20px; border-bottom: 1px solid #e5e7eb; margin-bottom: 30px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px; }
+        .gruppo-filtri { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .separatore { width: 1px; height: 30px; background-color: #d1d5db; }
+        .btn-filtro { padding: 8px 16px; border: 1px solid #d1d5db; border-radius: 20px; background-color: white; color: #555; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 14px; }
         .btn-filtro:hover { background-color: #f3f4f6; }
-        
         .btn-condizione.attivo { background-color: #333; color: white; border-color: #333; }
         .btn-categoria.attivo { background-color: #e53935; color: white; border-color: #e53935; }
 
-        /* --- AREA CONTENUTO CENTRALE --- */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px 40px 20px;
-        }
-
-        #loading {
-            text-align: center;
-            font-size: 18px;
-            color: #666;
-            margin-top: 50px;
-            font-weight: 500;
-        }
-
-        /* --- GRIGLIA E CARD --- */
-        .griglia-prodotti {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 25px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            overflow: hidden;
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-        }
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-            border-color: #d1d5db;
-        }
-
-        .card img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .card-dettagli {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .card-titolo {
-            font-size: 17px;
-            font-weight: 600;
-            margin: 0 0 12px 0;
-            color: #111;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            line-height: 1.3;
-        }
-
-        .card-prezzo {
-            font-weight: 800;
-            font-size: 20px;
-            color: #111;
-            margin: auto 0 10px 0;
-        }
-
-        .badges {
-            display: flex;
-            gap: 6px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            font-size: 11px;
-            color: #555;
-            text-transform: uppercase;
-            background-color: #f3f4f6;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
+        /* --- AREA CONTENUTO E GRIGLIA --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px 20px; }
+        .griglia-prodotti { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
+        
+        .card { background: white; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; transition: all 0.2s ease-in-out; cursor: pointer; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); border-color: #d1d5db; }
+        .card img { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid #f3f4f6; }
+        .card-dettagli { padding: 16px; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-titolo { font-size: 17px; font-weight: 600; margin: 0 0 12px 0; color: #111; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
+        .card-prezzo { font-weight: 800; font-size: 20px; color: #111; margin: auto 0 10px 0; }
+        .badges { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+        .badge { font-size: 11px; color: #555; text-transform: uppercase; background-color: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-weight: 700; }
         .badge.categoria { background-color: #ffebee; color: #c62828; }
 
-        /* --- RESPONSIVE PER SMARTPHONE --- */
+        /* --- SCHERMATA CARICAMENTO MIGLIORATA --- */
+        #loading-container { text-align: center; margin-top: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f4f6;
+            border-top: 5px solid #e53935;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #loading-titolo { font-size: 20px; font-weight: 700; color: #111; margin: 0 0 10px 0; }
+        #loading-messaggio { font-size: 15px; color: #666; max-width: 400px; line-height: 1.5; }
+
         @media (max-width: 768px) {
             .navbar { flex-wrap: wrap; padding: 12px 15px; }
             .search-container { order: 3; width: 100%; max-width: 100%; margin-top: 10px; }
@@ -206,16 +71,13 @@
 </head>
 <body>
 
-    <!-- NAVBAR IN ALTO (Ora totalmente pubblica e anonima) -->
     <nav class="navbar">
         <a href="/index.html" class="logo">IlMio<span>Mercatino</span></a>
-        
         <div class="search-container">
             <input type="text" id="barra-ricerca" class="ricerca" placeholder="Cosa stai cercando oggi?">
         </div>
     </nav>
 
-    <!-- BARRA DEI FILTRI -->
     <div class="barra-filtri">
         <div class="gruppo-filtri">
             <button class="btn-filtro btn-categoria attivo" data-categoria="tutte">Tutte le Categorie</button>
@@ -225,9 +87,7 @@
             <button class="btn-filtro btn-categoria" data-categoria="Abbigliamento">Abbigliamento</button>
             <button class="btn-filtro btn-categoria" data-categoria="Altro">Altro</button>
         </div>
-
         <div class="separatore"></div>
-
         <div class="gruppo-filtri">
             <button class="btn-filtro btn-condizione attivo" data-condizione="tutte">Tutti gli stati</button>
             <button class="btn-filtro btn-condizione" data-condizione="nuovo">Solo Nuovo</button>
@@ -235,34 +95,53 @@
         </div>
     </div>
 
-    <!-- CONTENITORE CENTRALE -->
     <main class="container">
-        <div id="loading">Caricamento annunci in corso... ☕</div>
-        <div class="griglia-prodotti" id="vetrina"></div>
+        <!-- Nuovo Loader -->
+        <div id="loading-container">
+            <div class="spinner"></div>
+            <h2 id="loading-titolo">Caricamento vetrina...</h2>
+            <p id="loading-messaggio">Stiamo preparando gli annunci per te. Un istante di pazienza!</p>
+        </div>
+        
+        <div class="griglia-prodotti" id="vetrina" style="display: none;"></div>
     </main>
 
-    <!-- LOGICA JAVASCRIPT -->
     <script>
         let catalogoCompleto = [];
         let filtroCondizioneAttuale = 'tutte';
         let filtroCategoriaAttuale = 'tutte'; 
 
         const contenitoreVetrina = document.getElementById('vetrina');
-        const loadingMessage = document.getElementById('loading');
+        const loadingContainer = document.getElementById('loading-container');
+        const loadingTitolo = document.getElementById('loading-titolo');
+        const loadingMessaggio = document.getElementById('loading-messaggio');
         const barraRicerca = document.getElementById('barra-ricerca');
         const bottoniCondizione = document.querySelectorAll('.btn-condizione');
         const bottoniCategoria = document.querySelectorAll('.btn-categoria');
+
+        // Se il server di Render sta dormendo, cambiamo il testo dopo 4 secondi
+        const timeoutCaricamentoLungo = setTimeout(() => {
+            loadingTitolo.innerText = "Risveglio del Server in corso... ☕";
+            loadingMessaggio.innerHTML = "Il nostro magazzino si sta aprendo (può richiedere fino a 40 secondi).<br>Non chiudere la pagina, la merce sta arrivando!";
+        }, 4000);
 
         async function caricaProdotti() {
             try {
                 const risposta = await fetch('/api/prodotti');
                 catalogoCompleto = await risposta.json();
                 
-                loadingMessage.style.display = 'none';
+                // Server sveglio! Nascondiamo il loader e mostriamo la griglia
+                clearTimeout(timeoutCaricamentoLungo);
+                loadingContainer.style.display = 'none';
+                contenitoreVetrina.style.display = 'grid';
+                
                 mostraProdotti(catalogoCompleto);
             } catch (errore) {
-                loadingMessage.innerText = '❌ Errore nel caricamento dei prodotti.';
-                console.error('Errore:', errore);
+                clearTimeout(timeoutCaricamentoLungo);
+                loadingTitolo.innerText = "Ops! Qualcosa è andato storto.";
+                loadingTitolo.style.color = "#dc2626";
+                loadingMessaggio.innerText = "Non siamo riusciti a caricare il magazzino. Ricarica la pagina.";
+                document.querySelector('.spinner').style.display = 'none';
             }
         }
 
@@ -270,7 +149,7 @@
             contenitoreVetrina.innerHTML = '';
             
             if (prodottiDaMostrare.length === 0) {
-                contenitoreVetrina.innerHTML = '<p style="font-size:18px; color:#666; width:100%; text-align:center; grid-column: 1 / -1;">Nessun annuncio trovato con questi filtri.</p>';
+                contenitoreVetrina.innerHTML = '<p style="font-size:18px; color:#666; width:100%; text-align:center; grid-column: 1 / -1; margin-top:40px;">Nessun annuncio trovato con questi criteri.</p>';
                 return;
             }
 
@@ -278,7 +157,6 @@
                 const prezzoFormattato = Number(prodotto.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
                 const immagineSrc = (prodotto.immagini && prodotto.immagini.length > 0) ? prodotto.immagini[0] : 'https://via.placeholder.com/400x300?text=No+Foto';
                 
-                // GESTIONE DELLO STATO (Disponibile / Prenotato / Venduto)
                 const stato = prodotto.stato_vendita || 'Disponibile';
                 let htmlStato = '';
                 let stileCard = '';
@@ -287,7 +165,7 @@
                     htmlStato = `<span class="badge" style="background-color: #fef08a; color: #854d0e; border: 1px solid #fde047;">🟡 Prenotato</span>`;
                 } else if (stato === 'Venduto') {
                     htmlStato = `<span class="badge" style="background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca;">🔴 Venduto</span>`;
-                    stileCard = 'opacity: 0.6; filter: grayscale(40%);'; // Sbiadisce la card se è venduto
+                    stileCard = 'opacity: 0.6; filter: grayscale(40%);'; 
                 }
 
                 const cardHTML = `
@@ -310,20 +188,14 @@
             });
         }
 
-        // Sistema di filtraggio
         function applicaFiltri() {
             const testoRicerca = barraRicerca.value.toLowerCase();
-            
             const prodottiFiltrati = catalogoCompleto.filter(prodotto => {
                 const titoloCorrisponde = prodotto.titolo.toLowerCase().includes(testoRicerca);
-                const condizioneCorrisponde = (filtroCondizioneAttuale === 'tutte') || 
-                                              (prodotto.condizione && prodotto.condizione.toLowerCase() === filtroCondizioneAttuale);
-                const categoriaCorrisponde = (filtroCategoriaAttuale === 'tutte') || 
-                                             (prodotto.categoria && prodotto.categoria === filtroCategoriaAttuale);
-                
+                const condizioneCorrisponde = (filtroCondizioneAttuale === 'tutte') || (prodotto.condizione && prodotto.condizione.toLowerCase() === filtroCondizioneAttuale);
+                const categoriaCorrisponde = (filtroCategoriaAttuale === 'tutte') || (prodotto.categoria && prodotto.categoria === filtroCategoriaAttuale);
                 return titoloCorrisponde && condizioneCorrisponde && categoriaCorrisponde;
             });
-
             mostraProdotti(prodottiFiltrati);
         }
 
