@@ -16,8 +16,10 @@
         .nav-actions { display: flex; gap: 15px; align-items: center; }
         .btn-header { color: #ccc; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.2s; }
         .btn-header:hover { color: white; }
-        .btn-logout { background-color: transparent; color: #ccc; border: 1px solid #555; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-logout { background-color: transparent; color: #ccc; border: 1px solid #555; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s; display: none; /* Nascosto di default */ }
         .btn-logout:hover { background-color: #333; color: white; border-color: #777; }
+        .btn-login-nav { background-color: #e53935; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-login-nav:hover { background-color: #c62828; }
 
         /* --- ZONA STATISTICHE E RICERCA --- */
         .pannello-superiore { background: white; padding: 30px 20px; border-bottom: 1px solid #e5e7eb; margin-bottom: 30px; }
@@ -64,6 +66,16 @@
         
         .btn-elimina { grid-column: span 2; background-color: #f3f4f6; color: #4b5563; border-color: #d1d5db; margin-top: 5px; }
         .btn-elimina:hover { background-color: #e5e7eb; color: #111; }
+
+        /* --- STILI MODAL LOGIN --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-login { background: white; padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-login h2 { margin-top: 0; color: #111; margin-bottom: 20px; }
+        .modal-login input { width: 100%; padding: 15px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+        .modal-login button { width: 100%; padding: 15px; background: #e53935; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .modal-login button:hover { background: #c62828; }
+        .errore-login { color: #dc2626; margin-bottom: 15px; font-size: 14px; display: none; }
+        .chiudi-modal { margin-top: 15px; font-size: 14px; color: #666; cursor: pointer; display: block; text-decoration: underline; }
         
         @media (max-width: 600px) {
             .statistiche { grid-template-columns: 1fr; }
@@ -72,12 +84,14 @@
 </head>
 <body>
 
+    <!-- NAVBAR NERA AREA ADMIN -->
     <nav class="navbar">
         <a href="/admin.html" class="logo">Area<span>Gestione</span></a>
         <div class="nav-actions">
             <a href="/index.html" class="btn-header">Vai alla Vetrina</a>
-            <a href="/aggiungi.html" class="btn-header" style="color: #4ade80;">+ Nuovo Annuncio</a>
-            <button onclick="esci()" class="btn-logout">Esci</button>
+            <a href="/aggiungi.html" class="btn-header" id="btn-nuovo-annuncio" style="color: #4ade80; display:none;">+ Nuovo Annuncio</a>
+            <button onclick="mostraLogin()" id="btn-apri-login" class="btn-login-nav">Login Gestore</button>
+            <button onclick="esci()" id="btn-esci" class="btn-logout">Esci</button>
         </div>
     </nav>
 
@@ -107,11 +121,91 @@
         <div class="griglia-prodotti" id="vetrina"></div>
     </main>
 
+    <!-- MODAL DI LOGIN NASCOSTA -->
+    <div id="modal-login-overlay" class="modal-overlay">
+        <div class="modal-login">
+            <h2>Area Riservata</h2>
+            <p style="color: #666; margin-bottom: 25px; font-size: 14px;">Inserisci la password per gestire il magazzino.</p>
+            <div id="msg-errore-login" class="errore-login">Password errata. Riprova.</div>
+            <input type="password" id="input-password" placeholder="Password gestore">
+            <button onclick="effettuaLogin()">Accedi</button>
+            <span class="chiudi-modal" onclick="chiudiLogin()">Annulla</span>
+        </div>
+    </div>
+
     <script>
         let catalogoCompleto = [];
         const contenitoreVetrina = document.getElementById('vetrina');
         const loadingMessage = document.getElementById('loading');
         const barraRicerca = document.getElementById('barra-ricerca');
+        let utenteAutenticato = false; // Stato dell'autenticazione
+
+        // Funzioni Modal Login
+        function mostraLogin() {
+            document.getElementById('modal-login-overlay').style.display = 'flex';
+        }
+        function chiudiLogin() {
+            document.getElementById('modal-login-overlay').style.display = 'none';
+        }
+
+        async function verificaAutenticazione() {
+            // Un modo semplice per vedere se siamo autenticati è provare a chiamare una rotta protetta
+            // Facciamo una richiesta 'dummy' (vuota) per testare il token
+            try {
+                const test = await fetch('/api/prodotti/test-auth', { method: 'GET' });
+                if (test.ok) {
+                    impostaInterfacciaLoggato(true);
+                } else {
+                    impostaInterfacciaLoggato(false);
+                }
+            } catch (e) {
+                 impostaInterfacciaLoggato(false);
+            }
+        }
+
+        function impostaInterfacciaLoggato(isLoggato) {
+            utenteAutenticato = isLoggato;
+            if (isLoggato) {
+                document.getElementById('btn-apri-login').style.display = 'none';
+                document.getElementById('btn-esci').style.display = 'inline-block';
+                document.getElementById('btn-nuovo-annuncio').style.display = 'inline-block';
+            } else {
+                document.getElementById('btn-apri-login').style.display = 'inline-block';
+                document.getElementById('btn-esci').style.display = 'none';
+                document.getElementById('btn-nuovo-annuncio').style.display = 'none';
+            }
+            caricaProdotti(); // Ricarica per mostrare/nascondere i bottoni di azione
+        }
+
+        async function effettuaLogin() {
+            const password = document.getElementById('input-password').value;
+            try {
+                const risposta = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: password })
+                });
+
+                if (risposta.ok) {
+                    document.getElementById('msg-errore-login').style.display = 'none';
+                    chiudiLogin();
+                    impostaInterfacciaLoggato(true);
+                } else {
+                    document.getElementById('msg-errore-login').style.display = 'block';
+                }
+            } catch (error) {
+                alert("Errore di connessione al server");
+            }
+        }
+
+        async function esci() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                impostaInterfacciaLoggato(false);
+            } catch (err) {
+                console.error("Errore durante il logout", err);
+            }
+        }
 
         async function caricaProdotti() {
             try {
@@ -126,7 +220,6 @@
             }
         }
 
-        // Calcola e aggiorna i contatori in alto
         function calcolaStatistiche(prodotti) {
             let totaleArticoli = prodotti.length;
             let venduti = 0;
@@ -136,7 +229,6 @@
                 if (p.stato_vendita === 'Venduto') {
                     venduti++;
                 } else {
-                    // Calcola il valore solo della merce ancora disponibile
                     valoreTotale += Number(p.prezzo); 
                 }
             });
@@ -165,6 +257,20 @@
                     badgeStato = `<span class="badge-stato badge-venduto">🔴 Venduto</span>`;
                 }
 
+                // Genera i bottoni solo se l'utente è autenticato
+                let bottoniAzioneHtml = '';
+                if (utenteAutenticato) {
+                    bottoniAzioneHtml = `
+                        <div class="azioni-card">
+                            <button onclick="cambiaStato('${prodotto._id}', 'Venduto')" class="btn btn-venduto">🔴 Venduto</button>
+                            <button onclick="cambiaStato('${prodotto._id}', 'Disponibile')" class="btn btn-disponibile">🟢 Disponibile</button>
+                            <button onclick="eliminaProdotto('${prodotto._id}')" class="btn btn-elimina">🗑️ Elimina Definitivamente</button>
+                        </div>
+                    `;
+                } else {
+                    bottoniAzioneHtml = `<p style="font-size:12px; color:#999; text-align:center; margin-top:10px;">Fai il login per gestire</p>`;
+                }
+
                 const cardHTML = `
                     <div class="card">
                         ${badgeStato}
@@ -173,12 +279,7 @@
                             <div class="codice-mini">#${codice}</div>
                             <h3 class="card-titolo">${prodotto.titolo}</h3>
                             <p class="card-prezzo">${prezzoFormattato}</p>
-                            
-                            <div class="azioni-card">
-                                <button onclick="cambiaStato('${prodotto._id}', 'Venduto')" class="btn btn-venduto">🔴 Venduto</button>
-                                <button onclick="cambiaStato('${prodotto._id}', 'Disponibile')" class="btn btn-disponibile">🟢 Disponibile</button>
-                                <button onclick="eliminaProdotto('${prodotto._id}')" class="btn btn-elimina">🗑️ Elimina Definitivamente</button>
-                            </div>
+                            ${bottoniAzioneHtml}
                         </div>
                     </div>
                 `;
@@ -186,8 +287,9 @@
             });
         }
 
-        // Funzione per Eliminare
         async function eliminaProdotto(idProdotto) {
+            if (!utenteAutenticato) { mostraLogin(); return; }
+            
             const conferma = confirm("Sei sicuro di voler eliminare definitivamente questo annuncio?");
             if (!conferma) return;
 
@@ -196,15 +298,17 @@
                 if (risposta.ok) {
                     caricaProdotti(); 
                 } else {
-                    alert("❌ Si è verificato un errore durante l'eliminazione.");
+                    alert("❌ Si è verificato un errore durante l'eliminazione. (Forse devi rifare il login)");
+                    mostraLogin();
                 }
             } catch (errore) {
                 alert("❌ Errore di connessione col server.");
             }
         }
 
-        // Funzione per Cambiare Stato (Da preparare sul server!)
         async function cambiaStato(idProdotto, nuovoStato) {
+             if (!utenteAutenticato) { mostraLogin(); return; }
+
             try {
                 const risposta = await fetch(`/api/prodotti/${idProdotto}/stato`, { 
                     method: 'PATCH',
@@ -213,21 +317,13 @@
                 });
                 
                 if (risposta.ok) {
-                    caricaProdotti(); // Ricarica per aggiornare grafiche e statistiche
+                    caricaProdotti(); 
                 } else {
-                    alert("❌ Funzione di cambio stato non ancora attiva sul server.");
+                    alert("❌ Errore cambio stato. (Forse devi rifare il login)");
+                     mostraLogin();
                 }
             } catch (errore) {
                 alert("❌ Errore di connessione col server.");
-            }
-        }
-
-        async function esci() {
-            try {
-                await fetch('/api/logout', { method: 'POST' });
-                window.location.href = '/index.html';
-            } catch (err) {
-                console.error("Errore durante il logout", err);
             }
         }
 
@@ -240,7 +336,8 @@
             mostraProdotti(filtrati);
         });
 
-        caricaProdotti();
+        // All'avvio, controlla se siamo già loggati
+        verificaAutenticazione();
     </script>
 </body>
 </html>

@@ -182,5 +182,9 @@ app.patch('/api/prodotti/:id/stato', controllaAutenticazione, async (req, res) =
         res.status(500).send('Errore aggiornamento stato: ' + errore.message);
     }
 });
+// --- ROTTA TEST AUTENTICAZIONE ---
+app.get('/api/prodotti/test-auth', controllaAutenticazione, (req, res) => {
+    res.status(200).send("OK");
+});
 
 app.listen(3000, () => console.log('✅ Server acceso sulla porta 3000!'));
